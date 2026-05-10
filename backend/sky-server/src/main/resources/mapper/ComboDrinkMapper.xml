@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sky.mapper.ComboDrinkMapper">
+
+
+    <select id="getComboDrinkIdsByDrinkIds" resultType="java.lang.Long">
+        select setmeal_id from setmeal_dish where dish_id in
+        <foreach collection="drinkIds" item="drinkId" separator="," open = "(" close=")">
+            #{drinkId}
+        </foreach>
+    </select>
+
+
+    <insert id="insertBatch" parameterType="list">
+        insert into setmeal_dish
+        (setmeal_id,dish_id,name,price,copies)
+        values
+        <foreach collection="list" item="sd" separator=",">
+            (#{sd.comboId},#{sd.drinkId},#{sd.name},#{sd.price},#{sd.copies})
+        </foreach>
+    </insert>
+
+
+</mapper>

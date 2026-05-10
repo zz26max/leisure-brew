@@ -1,0 +1,45 @@
+// Enhanced page transitions for Leisure Brew
+
+// Fade-slide-up for page entries
+.fade-slide-up-enter-active {
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.fade-slide-up-leave-active {
+  transition: all 0.25s cubic-bezier(0.4, 0, 1, 1);
+}
+.fade-slide-up-enter {
+  opacity: 0;
+  transform: translateY(20px);
+}
+.fade-slide-up-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+// Scale-fade for dialogs/modals
+.scale-fade-enter-active {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.scale-fade-leave-active {
+  transition: all 0.2s cubic-bezier(0.4, 0, 1, 1);
+}
+.scale-fade-enter {
+  opacity: 0;
+  transform: scale(0.95);
+}
+.scale-fade-leave-to {
+  opacity: 0;
+  transform: scale(0.95);
+}
+
+// Fade for simple transitions
+.fade-enter-active {
+  transition: opacity 0.3s ease;
+}
+.fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}

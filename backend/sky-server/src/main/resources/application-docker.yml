@@ -1,0 +1,36 @@
+# Docker 环境配置
+# 实际值通过 docker-compose.yml 的 environment 注入，这里提供默认结构
+
+sky:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    host: ${SKY_DATASOURCE_HOST:localhost}
+    port: ${SKY_DATASOURCE_PORT:3306}
+    database: ${SKY_DATASOURCE_DATABASE:meal_buddy}
+    username: ${SKY_DATASOURCE_USERNAME:root}
+    password: ${SKY_DATASOURCE_PASSWORD:root}
+
+  alioss:
+    endpoint: ${SKY_ALIOSS_ENDPOINT:}
+    access-key-id: ${SKY_ALIOSS_ACCESS_KEY_ID:}
+    access-key-secret: ${SKY_ALIOSS_ACCESS_KEY_SECRET:}
+    bucket-name: ${SKY_ALIOSS_BUCKET_NAME:}
+
+  redis:
+    localhost: ${SKY_REDIS_LOCALHOST:localhost}
+    port: ${SKY_REDIS_PORT:6379}
+    password: ${SKY_REDIS_PASSWORD:}
+    database: ${SKY_REDIS_DATABASE:0}
+
+  jwt:
+    admin-secret-key: ${SKY_JWT_ADMIN_SECRET_KEY:your_admin_secret_key}
+    user-secret-key: ${SKY_JWT_USER_SECRET_KEY:your_user_secret_key}
+
+  wechat:
+    appid: ${SKY_WECHAT_APPID:}
+    secret: ${SKY_WECHAT_SECRET:}
+    mchid: ${SKY_WECHAT_MCHID:}
+    mchSerialNo: ${SKY_WECHAT_MCHSERIALNO:}
+    apiV3Key: ${SKY_WECHAT_APIV3KEY:}
+    notifyUrl: ${SKY_WECHAT_NOTIFYURL:}
+    refundNotifyUrl: ${SKY_WECHAT_REFUNDNOTIFYURL:}
