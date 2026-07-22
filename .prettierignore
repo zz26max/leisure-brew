@@ -1,0 +1,7 @@
+**/dist
+**/target
+**/node_modules
+/frontend
+/miniprogram
+/backend
+pnpm-lock.yaml

@@ -1,252 +1,79 @@
-# 闲里茶咖 (Leisure Brew)
+# 闲里茶咖 · Leisure Brew
 
-一个功能完整的茶饮/咖啡售卖管理系统，采用前后端分离架构，包含管理后台和微信小程序用户端。
+一个面向社区茶饮门店的点单与经营系统。它保留“苍穹外卖”可靠的业务骨架，但产品叙事、视觉语言和前端工程已经重新设计：顾客端更像一间可以慢慢挑茶的小店，运营台更像门店伙伴每天愿意打开的工作桌。
 
-## 项目架构
+视觉以纸张米色、茶汤绿、茉莉黄和少量陶桃色为主。设计借鉴东方茶饮品牌的克制留白与花香意象，但不复制具体品牌的商标、版式或素材。
 
-```
-┌─────────────────────┐     ┌───────────────────┐     ┌─────────────────────┐
-│   管理端(前端)       │     │   Spring Boot    │     │  微信小程序 (用户端) │
-│  Vue + Element UI   │────>│     后端服务      │<────│      (独立仓库)      │
-│    端口: 8081       │     │    端口: 8080     │     │                     │
-└─────────────────────┘     └──────────┬────────┘     └─────────────────────┘
-                                       │
-                          ┌────────────┼────────────┐
-                          │            │            │
-                      ┌───▼───┐   ┌────▼────┐  ┌────▼────┐
-                      │ MySQL │   │  Redis  │  │ 阿里云OSS │
-                      └───────┘   └─────────┘  └─────────┘
-```
+## 当前工程
 
-## 技术栈
-
-### 后端
-
-| 技术 | 版本 | 说明 |
-|------|------|------|
-| Spring Boot | 2.7.3 | 核心框架 |
-| MyBatis | 2.2.0 | ORM 持久层框架 |
-| Spring Data Redis | - | Redis 缓存支持 |
-| Spring Cache | - | 缓存抽象层 |
-| Spring WebSocket | - | 实时消息推送 |
-| PageHelper | 1.3.0 | MyBatis 分页插件 |
-| Druid | 1.2.1 | 数据库连接池 |
-| Knife4j | 4.5.0 | Swagger API 文档 |
-| JJWT | 0.9.1 | JWT 令牌认证 |
-| Lombok | 1.18.36 | 代码简化工具 |
-| Fastjson | 1.2.76 | JSON 序列化 |
-| Apache POI | 3.16 | Excel 报表导出 |
-| AspectJ | 1.9.4 | AOP 切面编程 |
-
-### 前端
-
-| 技术 | 版本 | 说明 |
-|------|------|------|
-| Vue | 2.6.x | 核心框架 |
-| TypeScript | 3.6.2 | 类型安全的 JavaScript |
-| Vue Router | 3.1.x | 前端路由 |
-| Vuex | 3.1.x | 状态管理 |
-| Element UI | 2.12.x | UI 组件库 |
-| Axios | 0.19.x | HTTP 请求库 |
-| ECharts | 5.3.x | 数据可视化图表 |
-| SCSS | - | CSS 预处理器 |
-| Vue CLI | 3.11.x | 项目构建工具 |
-
-### 数据库 & 中间件
-
-| 技术 | 说明 |
-|------|------|
-| MySQL | 关系型数据库，存储业务数据 |
-| Redis | 缓存、会话管理 |
-| 阿里云 OSS | 对象存储，管理菜品图片等静态资源 |
-
-### 第三方服务
-
-| 服务 | 说明 |
-|------|------|
-| 微信小程序登录 | 用户端微信授权登录 |
-| 微信支付 | 在线支付功能 |
-| Cpolar | 内网穿透，用于微信支付回调 |
-
-### 部署
-
-| 技术 | 说明 |
-|------|------|
-| Docker | 容器化部署 |
-| Docker Compose | 多容器编排 |
-| Nginx | 前端静态资源 + API 反向代理 |
-
-## 项目结构
-
-```
-leisure-brew/
-├── docker-compose.yml               # Docker 容器编排
-├── backend/                         # 后端 (Spring Boot 多模块 Maven 项目)
-│   ├── Dockerfile                   # 后端镜像构建
-│   └── sql/                         # 数据库初始化脚本
-│   ├── sky-common/                  # 公共模块：工具类、常量、异常、配置属性
-│   │   └── com.sky
-│   │       ├── constant/            # 常量定义
-│   │       ├── context/             # ThreadLocal 上下文
-│   │       ├── enumeration/         # 枚举类
-│   │       ├── exception/           # 自定义异常
-│   │       ├── json/                # Jackson 配置
-│   │       ├── properties/          # 配置属性类
-│   │       ├── result/              # 统一响应封装
-│   │       └── utils/               # 工具类 (JWT, OSS, HTTP, 微信支付)
-│   ├── sky-pojo/                    # 实体模块：DTO、VO、Entity
-│   │   └── com.sky
-│   │       ├── dto/                 # 数据传输对象 (22个)
-│   │       ├── entity/              # 数据库实体类 (12个)
-│   │       └── vo/                  # 视图对象 (17个)
-│   └── sky-server/                  # 主服务模块：业务逻辑
-│       └── com.sky
-│           ├── annotation/          # 自定义注解 (@AutoFill)
-│           ├── aspect/              # AOP 切面 (自动填充审计字段)
-│           ├── config/              # 配置类 (WebMvc, Redis, OSS, WebSocket)
-│           ├── controller/          # 控制器
-│           │   ├── admin/           # 管理端接口 (10个)
-│           │   ├── user/            # 用户端接口 (8个)
-│           │   └── notify/          # 回调通知 (微信支付)
-│           ├── handler/             # 全局异常处理
-│           ├── interceptor/         # JWT 拦截器 (管理端 + 用户端)
-│           ├── mapper/              # MyBatis Mapper 接口 (12个)
-│           ├── service/             # 业务逻辑层 (12个接口)
-│           ├── talk/                # 定时任务
-│           └── websocket/           # WebSocket 服务
-│
-└── frontend/                        # 前端 (Vue + TypeScript 管理后台)
-    ├── Dockerfile                   # 前端镜像构建
-    ├── nginx.conf                   # Nginx 反向代理配置
-    └── src/
-        ├── api/                     # API 请求模块
-        ├── assets/                  # 静态资源 (图片、音频)
-        ├── components/              # 公共组件 (面包屑、图表、上传等)
-        ├── icons/                   # SVG 图标
-        ├── layout/                  # 页面布局 (侧边栏、导航栏)
-        ├── router/                  # 路由配置
-        ├── store/                   # Vuex 状态管理
-        ├── styles/                  # 全局样式 (SCSS)
-        ├── utils/                   # 工具函数 (请求封装、Cookie、验证)
-        └── views/                   # 页面视图
-            ├── login/               # 登录页
-            ├── dashboard/           # 工作台
-            ├── orderDetails/        # 订单管理
-            ├── drink/               # 饮品管理
-            ├── combo/               # 套餐管理
-            ├── category/            # 分类管理
-            ├── employee/            # 员工管理
-            ├── statistics/          # 数据统计
-            └── inform/              # 消息通知
+```text
+apps/
+  admin/          Vue 3 + TypeScript 门店运营台
+  wechat/         原生 TypeScript 微信小程序源码
+packages/
+  api-contract/   两端共享的接口与业务类型
+  design-tokens/  共享品牌色与设计变量
+backend/          Spring Boot 服务与数据库脚本
+frontend/         旧 Vue 2 管理端，仅用于迁移对照
+miniprogram/      旧小程序编译产物，仅用于迁移对照
+docs/             工程规范与长期决策
 ```
 
-## 功能模块
+新功能只在 `apps/` 和 `packages/` 中开发。旧目录暂时保留，便于对照尚未迁完的边缘行为；不要再向其中追加业务代码。
 
-| 模块 | 功能说明 |
-|------|----------|
-| 员工管理 | 员工登录/登出、增删改查、状态启禁用、密码修改 |
-| 分类管理 | 菜品分类和套餐分类的增删改查、排序 |
-| 菜品管理 | 菜品增删改查、口味管理、图片上传、启售/停售 |
-| 套餐管理 | 套餐增删改查、关联菜品、启售/停售 |
-| 订单管理 | 订单查询、接单、拒单、取消、配送、完成、订单统计 |
-| 数据统计 | 营业额统计、订单统计、用户统计、商品销量 Top10 |
-| 消息通知 | 新订单实时推送、消息已读/未读管理 |
-| 购物车 | 用户端添加/清空购物车 |
-| 地址簿 | 用户端收货地址管理 |
+## 开发约定
 
-## 环境要求
+开始编码前先阅读 [工程协作与代码规范](./docs/ENGINEERING_GUIDE.md)。它记录了 Git 分支与提交规则、TypeScript/Vue/小程序代码风格、接口边界、视觉语言、测试门槛和迁移策略，是上下文压缩后继续工作的依据。当前完成度、验证结果与发布前事项见 [前端重写进度](./docs/FRONTEND_REWRITE.md)。
 
-| 环境 | 版本要求 |
-|------|----------|
-| JDK | 8+ |
-| Maven | 3.6+ |
-| Node.js | 12+ (推荐 14+) |
-| MySQL | 5.7+ |
-| Redis | 5.0+ |
+环境要求：Node.js 22 LTS 或 24、pnpm 11.7、JDK 17、Maven 3.9、MySQL 8、Redis 7。
 
-## 快速启动
-
-### 方式一：Docker 一键部署（推荐）
-
-需要安装 [Docker](https://docs.docker.com/get-docker/) 和 [Docker Compose](https://docs.docker.com/compose/install/)。
-
-```bash
-# 克隆项目
-git clone https://github.com/zz26max/leisure-brew.git
-cd leisure-brew
-
-# 一键启动（首次需要构建镜像，约 5-10 分钟）
-docker-compose up -d
-
-# 查看运行状态
-docker-compose ps
+```powershell
+corepack enable
+pnpm install
+pnpm dev:admin
 ```
 
-启动后访问：`http://localhost`（前端）| `http://localhost:8080/doc.html`（API 文档）
+管理端开发地址为 `http://localhost:5173`，Vite 会把 `/api` 和 `/ws` 代理到本机 `8080` 端口。
 
-停止服务：`docker-compose down`
+小程序用微信开发者工具导入 `apps/wechat`。本地接口地址可在调试器中设置：
 
-> 注意：数据库初始化脚本在 `backend/sql/` 目录下，包含：
-> - `sky_take_out.sql` - 数据库结构
-> - `meal_buddy_data.sql` - 种子数据
-> - `add_order_indexes.sql` - 订单索引优化
-> - `cleanup_test_data.sql` - 测试数据清理
-
-### 方式二：本地开发环境启动
-
-#### 1. 数据库准备
-
-```sql
-CREATE DATABASE meal_buddy DEFAULT CHARACTER SET utf8mb4;
--- 导入 SQL 脚本 (backend/sql/)
+```js
+wx.setStorageSync('leisure-api-base-url', 'http://localhost:8080')
 ```
 
-#### 2. 配置后端
+## 一键启动
 
-```bash
-cp backend/sky-server/src/main/resources/application-dev.yml.example \
-   backend/sky-server/src/main/resources/application-dev.yml
-# 编辑 application-dev.yml，填入数据库、Redis、OSS 等配置
+```powershell
+Copy-Item .env.example .env
+docker compose config
+docker compose up --build -d
 ```
 
-#### 3. 启动后端
+请先在 `.env` 中填写 MySQL、Redis 和两组不同的 JWT 随机密钥。启动后：
 
-```bash
-cd backend
-mvn clean package -DskipTest
-cd sky-server
-mvn spring-boot:run
+- 门店运营台：`http://localhost`
+- 接口文档：`http://localhost:8080/doc.html`
+- 健康检查：`http://localhost:8080/actuator/health`
+
+本地演示账号为 `admin`，初始口令是 `LocalBrew@2026!`。首次登录后请修改，正式环境不要复用。
+
+## 数据、支付与安全
+
+空数据卷会依次执行 `schema.sql`、`demo-data.sql`、`local-admin.sql` 和 `indexes.sql`。`cleanup-load-test.sql` 只供手动维护，不随启动执行。
+
+`PAYMENT_SIMULATION_ENABLED=true` 只用于本地走通下单，不会发起真实扣款。生产环境必须保持为 `false`，并在接入支付机构官方 SDK、证书验签和回调幂等后再开放。
+
+## 质量检查
+
+```powershell
+pnpm format:check
+pnpm lint
+pnpm typecheck
+pnpm test
+pnpm build
+
+Set-Location backend
+mvn test
 ```
 
-#### 4. 启动前端
-
-```bash
-cd frontend
-npm install
-npm run serve
-```
-
-### 默认登录
-
-- 账号：`admin`
-- 密码：`123456`
-
-## API 文档
-
-后端启动后，访问 Knife4j API 文档：
-
-- 管理端接口：`http://localhost:8080/doc.html`（分组：管理端接口）
-- 用户端接口：`http://localhost:8080/doc.html`（分组：用户端接口）
-
-## 核心设计
-
-- **双端 JWT 认证**：管理端和用户端使用不同的密钥和拦截器，互不影响
-- **AOP 自动填充**：通过 `@AutoFill` 注解自动填充 `createTime`、`updateTime`、`createUser`、`updateUser`
-- **ThreadLocal 上下文**：拦截器解析 JWT 后将用户 ID 存入 ThreadLocal，供业务层使用
-- **WebSocket 推送**：新订单实时通知管理端
-- **定时任务**：超时未支付订单自动取消（15分钟）、每日自动完成配送超时订单
-
-
-## License
-
-本项目仅供学习参考。
+管理端、小程序和共享包必须全部通过检查。提交前不要把 `dist/`、微信编译输出、真实密钥或本地 `.env` 放进 Git。

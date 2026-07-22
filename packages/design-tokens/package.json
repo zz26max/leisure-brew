@@ -1,0 +1,16 @@
+{
+  "name": "@leisure-brew/design-tokens",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "scripts": {
+    "build": "tsc --noEmit",
+    "lint": "tsc --noEmit",
+    "typecheck": "tsc --noEmit",
+    "test": "node -e \"console.log('design-tokens: no runtime tests')\""
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  }
+}

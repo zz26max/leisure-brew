@@ -1,0 +1,17 @@
+{
+  "name": "@leisure-brew/api-contract",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "build": "tsc --noEmit",
+    "lint": "tsc --noEmit",
+    "typecheck": "tsc --noEmit",
+    "test": "node -e \"console.log('api-contract: no runtime tests')\""
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  }
+}

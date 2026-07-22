@@ -1,0 +1,21 @@
+{
+  "name": "leisure-brew-workspace",
+  "version": "2.0.0",
+  "private": true,
+  "packageManager": "pnpm@11.7.0",
+  "engines": {
+    "node": ">=22 <25"
+  },
+  "scripts": {
+    "dev:admin": "pnpm --filter @leisure-brew/admin dev",
+    "build": "pnpm -r build",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test"
+  },
+  "devDependencies": {
+    "prettier": "^3.6.2"
+  }
+}
