@@ -1,37 +1,38 @@
 <template>
-  <div class="container">
-    <h2 class="homeTitle">
-      饮品总览<span><router-link to="drink">饮品管理</router-link></span>
-    </h2>
-    <div class="orderviewBox">
-      <ul>
-        <li>
-          <span class="status"><i class="iconfont icon-open"></i>已上架</span>
-          <span class="num">{{ dishesData.sold }}</span>
-        </li>
-        <li>
-          <span class="status"><i class="iconfont icon-stop"></i>已下架</span>
-          <span class="num">{{ dishesData.discontinued }}</span>
-        </li>
-        <li class="add">
-          <router-link to="/drink/add">
-            <i></i>
-            <p>新增饮品</p>
-          </router-link>
-        </li>
-      </ul>
+  <section class="dashboard-card menu-card">
+    <header class="menu-card__header">
+      <div class="menu-card__icon">
+        <i class="el-icon-coffee-cup" />
+      </div>
+      <div>
+        <p>DRINKS</p>
+        <h2>饮品菜单</h2>
+      </div>
+      <router-link to="/drink">
+        查看菜单
+      </router-link>
+    </header>
+    <div class="menu-card__counts">
+      <span><i class="is-live" /> 已上架 <strong>{{ count(dishesData.sold) }}</strong></span>
+      <span><i /> 已下架 <strong>{{ count(dishesData.discontinued) }}</strong></span>
     </div>
-  </div>
+    <router-link class="menu-card__action" to="/drink/add">
+      <i class="el-icon-plus" /> 上新饮品
+    </router-link>
+  </section>
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator'
-import orderList from './orderList.vue'
-@Component({
-  components: { orderList },
-  name: 'cuisineview',
-})
+import { Component, Prop, Vue } from 'vue-property-decorator'
+
+@Component({ name: 'DrinkSummary' })
 export default class extends Vue {
-  @Prop() private dishesData!: any
+  @Prop({ default: () => ({}) }) private dishesData!: any
+
+  private count(value: unknown) {
+    return Number(value || 0)
+  }
 }
 </script>
+
+<style lang="scss" scoped src="./menu-summary.scss"></style>

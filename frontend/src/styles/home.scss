@@ -697,3 +697,54 @@ display: -webkit-box;
 //     border-top-color:#4D4D4D !important
 //   }
 // }
+
+// Shared dashboard surface
+.dashboard-card {
+  padding: 24px;
+  background: $color-card-bg;
+  border: 1px solid $color-border-light;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-sm;
+}
+
+.dashboard-card__header {
+  display: flex;
+  align-items: center;
+  min-height: 42px;
+
+  h2,
+  p {
+    margin: 0;
+  }
+
+  h2 {
+    color: $color-text-primary;
+    font-family: 'Songti SC', STSong, SimSun, serif;
+    font-size: 19px;
+    letter-spacing: 0.03em;
+  }
+}
+
+.dashboard-card__eyebrow {
+  margin-bottom: 3px !important;
+  color: $color-accent;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+}
+
+.dashboard-card__hint {
+  margin-left: 18px !important;
+  color: $color-text-muted;
+  font-size: 12px;
+}
+
+.dashboard-card__link {
+  margin-left: auto;
+  color: $color-text-secondary;
+  font-size: 12px;
+
+  &:hover {
+    color: $color-primary;
+  }
+}

@@ -1,278 +1,99 @@
 <template>
-  <div class="wscn-http404-container">
-    <div class="wscn-http404">
-      <div class="pic-404">
-        <img
-          class="pic-404__parent"
-          src="@/assets/404-images/404.png"
-          alt="404"
-        >
-        <img
-          class="pic-404__child left"
-          src="@/assets/404-images/404-cloud.png"
-          alt="404"
-        >
-        <img
-          class="pic-404__child mid"
-          src="@/assets/404-images/404-cloud.png"
-          alt="404"
-        >
-        <img
-          class="pic-404__child right"
-          src="@/assets/404-images/404-cloud.png"
-          alt="404"
-        >
+  <main class="not-found">
+    <section class="not-found__card">
+      <div class="not-found__mark" aria-hidden="true">
+        <span class="not-found__steam" />
+        <i class="el-icon-coffee-cup" />
       </div>
-      <div class="text-404">
-        <div class="text-404__oops">
-          OOPS!
-        </div>
-        <div class="text-404__info">
-          闲里茶咖管理系统
-        </div>
-        <div class="text-404__headline">
-          {{ message }}
-        </div>
-        <div class="text-404__info">
-          请确认您输入的网址是否正确，或点击下方按钮返回首页。
-        </div>
-        <a
-          class="text-404__return-home"
-          @click.prevent="$router.push('/')"
-        >返回首页</a>
-      </div>
-    </div>
-  </div>
+      <p class="not-found__code">
+        404 · NOT FOUND
+      </p>
+      <h1>这杯暂时找不到</h1>
+      <p class="not-found__copy">
+        可能是地址写错了，也可能这页刚好去歇了一会儿。
+      </p>
+      <el-button type="primary" @click="$router.push('/')">
+        回到今日店况
+      </el-button>
+    </section>
+  </main>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator'
 
-@Component({
-    'name': 'Page404'
-})
-export default class extends Vue {
-  private message = '404 Page Not Found'
-}
+@Component({ name: 'Page404' })
+export default class extends Vue {}
 </script>
 
 <style lang="scss" scoped>
-.wscn-http404-container {
-  transform: translate(-50%,-50%);
-  position: absolute;
-  top: 40%;
-  left: 50%;
-}
+.not-found {
+  display: grid;
+  min-height: 100%;
+  padding: 40px;
+  background:
+    radial-gradient(circle at 70% 18%, rgba(184, 101, 59, 0.09), transparent 24%),
+    $color-page-bg;
+  place-items: center;
 
-.wscn-http404 {
-  position: relative;
-  width: 1200px;
-  padding: 0 50px;
-  overflow: hidden;
+  &__card {
+    width: min(520px, 100%);
+    padding: 64px 54px;
+    text-align: center;
+    background: $color-card-bg;
+    border: 1px solid $color-border-light;
+    border-radius: $radius-xl;
+    box-shadow: $shadow-md;
+  }
 
-  .pic-404 {
+  &__mark {
     position: relative;
-    float: left;
-    width: 600px;
-    overflow: hidden;
+    display: grid;
+    width: 92px;
+    height: 92px;
+    margin: 0 auto 28px;
+    color: #fffaf0;
+    background: $color-primary;
+    border-radius: 28px 28px 28px 9px;
+    place-items: center;
 
-    &__parent {
-      width: 100%;
-    }
-
-    &__child {
-      position: absolute;
-
-      &.left {
-        width: 80px;
-        top: 17px;
-        left: 220px;
-        opacity: 0;
-        animation-name: cloudLeft;
-        animation-duration: 2s;
-        animation-timing-function: linear;
-        animation-fill-mode: forwards;
-        animation-delay: 1s;
-      }
-
-      &.mid {
-        width: 46px;
-        top: 10px;
-        left: 420px;
-        opacity: 0;
-        animation-name: cloudMid;
-        animation-duration: 2s;
-        animation-timing-function: linear;
-        animation-fill-mode: forwards;
-        animation-delay: 1.2s;
-      }
-
-      &.right {
-        width: 62px;
-        top: 100px;
-        left: 500px;
-        opacity: 0;
-        animation-name: cloudRight;
-        animation-duration: 2s;
-        animation-timing-function: linear;
-        animation-fill-mode: forwards;
-        animation-delay: 1s;
-      }
-
-      @keyframes cloudLeft {
-        0% {
-          top: 17px;
-          left: 220px;
-          opacity: 0;
-        }
-
-        20% {
-          top: 33px;
-          left: 188px;
-          opacity: 1;
-        }
-
-        80% {
-          top: 81px;
-          left: 92px;
-          opacity: 1;
-        }
-
-        100% {
-          top: 97px;
-          left: 60px;
-          opacity: 0;
-        }
-      }
-
-      @keyframes cloudMid {
-        0% {
-          top: 10px;
-          left: 420px;
-          opacity: 0;
-        }
-
-        20% {
-          top: 40px;
-          left: 360px;
-          opacity: 1;
-        }
-
-        70% {
-          top: 130px;
-          left: 180px;
-          opacity: 1;
-        }
-
-        100% {
-          top: 160px;
-          left: 120px;
-          opacity: 0;
-        }
-      }
-
-      @keyframes cloudRight {
-        0% {
-          top: 100px;
-          left: 500px;
-          opacity: 0;
-        }
-
-        20% {
-          top: 120px;
-          left: 460px;
-          opacity: 1;
-        }
-
-        80% {
-          top: 180px;
-          left: 340px;
-          opacity: 1;
-        }
-
-        100% {
-          top: 200px;
-          left: 300px;
-          opacity: 0;
-        }
-      }
+    i {
+      font-size: 38px;
     }
   }
 
-  .text-404 {
-    position: relative;
-    float: left;
-    width: 300px;
-    padding: 30px 0;
-    overflow: hidden;
+  &__steam {
+    position: absolute;
+    top: -14px;
+    left: 44px;
+    width: 3px;
+    height: 21px;
+    background: $color-accent;
+    border-radius: 99px;
+    box-shadow: 11px 4px 0 rgba(184, 101, 59, 0.55);
+    transform: rotate(-8deg);
+  }
 
-    &__oops {
-      font-size: 32px;
-      font-weight: bold;
-      line-height: 40px;
-      color: #FF7A00;
-      opacity: 0;
-      margin-bottom: 20px;
-      animation-name: slideUp;
-      animation-duration: 0.5s;
-      animation-fill-mode: forwards;
-    }
+  &__code {
+    margin: 0 0 10px;
+    color: $color-accent;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+  }
 
-    &__headline {
-      font-size: 20px;
-      line-height: 24px;
-      color: #222;
-      font-weight: bold;
-      opacity: 0;
-      margin-bottom: 10px;
-      animation-name: slideUp;
-      animation-duration: 0.5s;
-      animation-delay: 0.1s;
-      animation-fill-mode: forwards;
-    }
+  h1 {
+    margin: 0;
+    color: $color-text-primary;
+    font-family: 'Songti SC', STSong, SimSun, serif;
+    font-size: 30px;
+    letter-spacing: 0.05em;
+  }
 
-    &__info {
-      font-size: 13px;
-      line-height: 21px;
-      color: grey;
-      opacity: 0;
-      margin-bottom: 30px;
-      animation-name: slideUp;
-      animation-duration: 0.5s;
-      animation-delay: 0.2s;
-      animation-fill-mode: forwards;
-    }
-
-    &__return-home {
-      display: block;
-      float: left;
-      width: 110px;
-      height: 36px;
-      background: linear-gradient(135deg, #FF7A00, #E06900);
-      border-radius: 100px;
-      text-align: center;
-      color: #ffffff;
-      opacity: 0;
-      font-size: 14px;
-      line-height: 36px;
-      cursor: pointer;
-      animation-name: slideUp;
-      animation-duration: 0.5s;
-      animation-delay: 0.3s;
-      animation-fill-mode: forwards;
-    }
-
-    @keyframes slideUp {
-      0% {
-        transform: translateY(60px);
-        opacity: 0;
-      }
-
-      100% {
-        transform: translateY(0);
-        opacity: 1;
-      }
-    }
+  &__copy {
+    margin: 14px 0 30px;
+    color: $color-text-secondary;
+    line-height: 1.8;
   }
 }
 </style>

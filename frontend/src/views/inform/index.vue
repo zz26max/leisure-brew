@@ -15,70 +15,68 @@
               ountUnread === 0 ? null : ountUnread > 99 ? '99+' : ountUnread
             "
             :hidden="!([1].includes(item.value) && ountUnread)"
-            >{{ item.label }}</el-badge
           >
+            {{ item.label }}
+          </el-badge>
         </li>
       </ul>
 
       <el-button
+        v-if="status === 1 && baseData.length > 0"
         icon="iconfont icon-clear"
         class="right-el-button"
-        v-if="status === 1 && baseData.length > 0"
         @click="handleBatch"
-        >全部已读</el-button
       >
+        全部已读
+      </el-button>
       <el-button
+        v-else
         icon="iconfont icon-clear"
         class="right-el-button onbutton"
         disabled
-        v-else
-        >全部已读</el-button
       >
+        全部已读
+      </el-button>
     </div>
     <div class="container newBox" :class="{ hContainer: baseData.length }">
-      <div class="informList" v-if="baseData.length > 0">
+      <div v-if="baseData.length > 0" class="informList">
         <div v-for="(item, index) in baseData" :key="index">
           <!-- 待接单 -->
-          <div class="item" v-if="item.type === 1">
+          <div v-if="item.type === 1" class="item">
             <div class="tit">
               <span>【待接单】</span>{{ item.arrNew[0]
               }}<span class="fontOrderTip" @click="handleSetStatus(item.id)">
                 <router-link :to="'/order?status=' + 2">{{
                   item.arrNew[1]
-                }}</router-link></span
-              >{{ item.arrNew[2]
+                }}</router-link></span>{{ item.arrNew[2]
               }}<span class="time">{{ item.createTime }}</span>
             </div>
           </div>
-          <div class="item" v-if="item.type === 2">
+          <div v-if="item.type === 2" class="item">
             <div class="tit">
               <i>急</i><span>【待接单】</span>{{ item.arrNew[0]
-              }}<span class="fontOrderTip" @click="handleSetStatus(item.id)"
-                ><router-link :to="'/order?status=' + 2">{{
-                  item.arrNew[1]
-                }}</router-link></span
-              >{{ item.arrNew[2]
+              }}<span class="fontOrderTip" @click="handleSetStatus(item.id)"><router-link :to="'/order?status=' + 2">{{
+                item.arrNew[1]
+              }}</router-link></span>{{ item.arrNew[2]
               }}<span class="time">{{ item.createTime }}</span>
             </div>
           </div>
           <!-- end -->
           <!-- 待派送 -->
-          <div class="item" v-if="item.type === 3">
+          <div v-if="item.type === 3" class="item">
             <div class="tit">
               <span>【待派送】</span>{{ item.arrNew[0]
-              }}<span class="fontOrderTip" @click="handleSetStatus(item.id)"
-                ><router-link :to="'/order?status=' + 2">{{
-                  item.arrNew[1]
-                }}</router-link></span
-              >{{ item.arrNew[2]
+              }}<span class="fontOrderTip" @click="handleSetStatus(item.id)"><router-link :to="'/order?status=' + 2">{{
+                item.arrNew[1]
+              }}</router-link></span>{{ item.arrNew[2]
               }}<span class="time">{{ item.createTime }}</span>
             </div>
           </div>
           <!-- end -->
           <!-- 催单 -->
           <div
-            class="item"
             v-if="item.type === 4"
+            class="item"
             @mouseenter="toggleShow(item.id, index)"
             @mouseleave="mouseLeaves(index)"
           >
@@ -93,12 +91,7 @@
               </div>
               <div v-if="shopShow && showIndex === index" class="orderInfo">
                 <p>
-                  <span
-                    ><label>下单时间：</label>{{ item.details.orderTime }}</span
-                  ><span
-                    ><label>预计送达时间：</label
-                    >{{ item.details.estimatedDeliveryTime }}</span
-                  >
+                  <span><label>下单时间：</label>{{ item.details.orderTime }}</span><span><label>预计送达时间：</label>{{ item.details.estimatedDeliveryTime }}</span>
                 </p>
                 <p>
                   {{ item.details.consignee }}，{{ item.details.phone }}，{{
@@ -106,9 +99,7 @@
                   }}
                 </p>
                 <p>
-                  <span
-                    ><label>饮品：</label>{{ item.details.orderDishes }}</span
-                  >
+                  <span><label>饮品：</label>{{ item.details.orderDishes }}</span>
                 </p>
               </div>
             </div>
@@ -134,8 +125,8 @@
             </div>
           </div> -->
           <div
-            class="item"
             v-if="item.type === 5"
+            class="item"
             @mouseenter="toggleShow(item.id, index)"
             @mouseleave="mouseLeaves(index)"
           >
@@ -143,37 +134,20 @@
               <div class="tit">
                 <span>【今日数据】</span>认真工作的同时也要好好生活。<span
                   class="time"
-                  >{{ item.createTime }}</span
-                >
+                >{{ item.createTime }}</span>
               </div>
               <div v-if="shopShow && showIndex === index" class="orderInfo">
                 <p>
-                  <span
-                    ><label>营业额：</label>{{ item.details.turnover }}</span
-                  >
-                  <span
-                    ><label>有效订单：</label
-                    >{{ item.details.validOrderCount }}笔</span
-                  >
-                  <span
-                    ><label>订单完成率：</label
-                    >{{ item.details.orderCompletionRate }}</span
-                  >
+                  <span><label>营业额：</label>{{ item.details.turnover }}</span>
+                  <span><label>有效订单：</label>{{ item.details.validOrderCount }}笔</span>
+                  <span><label>订单完成率：</label>{{ item.details.orderCompletionRate }}</span>
                 </p>
                 <p>
-                  <span
-                    ><label>今日新增用户：</label
-                    >{{ item.details.newUsers }}</span
-                  >
-                  <span
-                    ><label>今日取消：</label
-                    >{{ item.details.cancelledOrders }}笔</span
-                  >
-                  <span
-                    ><label>今日取消金额：</label>￥{{
-                      item.details.cancelledAmount
-                    }}</span
-                  >
+                  <span><label>今日新增用户：</label>{{ item.details.newUsers }}</span>
+                  <span><label>今日取消：</label>{{ item.details.cancelledOrders }}笔</span>
+                  <span><label>今日取消金额：</label>￥{{
+                    item.details.cancelledAmount
+                  }}</span>
                 </p>
               </div>
             </div>
@@ -267,7 +241,13 @@ export default class extends Vue {
         // 处理催单、闭店详情数据
         val.arrNew = arrContent
         objNew = { ...val }
-        objNew.details = eval('(' + objNew.details + ')')
+        try {
+          objNew.details = typeof objNew.details === 'string'
+            ? JSON.parse(objNew.details)
+            : objNew.details
+        } catch (error) {
+          objNew.details = {}
+        }
         arrDetails.push(objNew)
       })
 

@@ -4250,7 +4250,7 @@ var _index = __webpack_require__(/*! ../../utils/index.js */ 29);function _inter
   },
   created: function created() {
     // 
-    // this.phoneData=splitMobile('15200000001')
+    // 电话由门店配置提供
 
   },
   onShow: function onShow() {
@@ -4475,8 +4475,9 @@ var _index = __webpack_require__(/*! ../../utils/index.js */ 29);function _inter
     // 获取店铺电话
     getShopPhone: function getShopPhone() {var _this9 = this;return _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee6() {return _regenerator.default.wrap(function _callee6$(_context6) {while (1) {switch (_context6.prev = _context6.next) {case 0:_context6.next = 2;return (
                   (0, _api.getShopPhone)().then(function (res) {
-                    _this9.phoneData = '400-618-4000';
-                    _this9.setShopPhone('400-618-4000');
+                    var phone = wx.getStorageSync('leisureStorePhone') || res.data || '';
+                    _this9.phoneData = phone;
+                    _this9.setShopPhone(phone);
                   }).catch(function (err) {}));case 2:case "end":return _context6.stop();}}}, _callee6);}))();
     },
     // 重新拼装image
@@ -4802,7 +4803,7 @@ var _index = __webpack_require__(/*! ../../utils/index.js */ 29);function _inter
     },
     // // 电话号码拨打
     // call(){
-    // 	const phone = '15200000001'
+    // 电话拨打由公共组件处理
     // call(this.phoneData)
     // }
     disabledScroll: function disabledScroll() {
@@ -20510,7 +20511,7 @@ Object.defineProperty(exports, "__esModule", { value: true });exports.baseUrl = 
 
 // var baseUrl = 'http://localhost:8080';//请求nginx，由nginx将请求转发到后端服务（本地开发用）
 // 部署时请将 YOUR_LAN_IP 替换为你的局域网IP（终端执行 ipconfig 查看 192.168.x.x）
-var baseUrl = 'http://localhost:8080';//Docker部署后，使用局域网IP访问后端
+var baseUrl = wx.getStorageSync('leisureApiBaseUrl') || 'http://localhost:8080'; // 可在开发者工具中切换联调地址
 //var baseUrl = 'https://c223c79.r2.cpolar.top';
 
 exports.baseUrl = baseUrl;
@@ -21882,7 +21883,7 @@ var _default = {
       styleType: 'button',
       textTip: '',
       showConfirm: false,
-      phoneData: '15200000001',
+      phoneData: wx.getStorageSync('leisureStorePhone') || '',
       toDate: null,
       tomorrowStart: null,
       newDate: null,
@@ -22143,8 +22144,15 @@ var _default = {
     },
     // 拨打电话
     call: function call() {
+      if (!this.phoneData) {
+        uni.showToast({
+          title: '门店电话尚未配置',
+          icon: 'none' });
+
+        return;
+      }
       uni.makePhoneCall({
-        phoneNumber: '114' //仅为示例
+        phoneNumber: this.phoneData
       });
     },
     // // 联系商家进行取消弹层
@@ -28492,7 +28500,7 @@ var _default = {
       return this.orderListData();
     },
     phone: function phone() {
-      return this.shopPhone();
+      return this.shopPhone() || wx.getStorageSync('leisureStorePhone') || '';
     },
     // // 处理订单详情列表
     orderDataes: function orderDataes() {
@@ -28690,7 +28698,15 @@ var _default = {
 
     },
     call: function call() {
-      (0, _index.call)(this.shopPhone());
+      var phoneNumber = this.phone;
+      if (!phoneNumber) {
+        uni.showToast({
+          title: '门店电话尚未配置',
+          icon: 'none' });
+
+        return;
+      }
+      (0, _index.call)(phoneNumber);
     } }) };exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
 

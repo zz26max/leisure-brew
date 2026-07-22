@@ -1,118 +1,60 @@
 <template>
-  <div>
-    <div class="logo">
-      <!-- <img
-        src="./../../../assets/logo.png"
-        width="122.5"
-        alt=""
-      > -->
-      <!-- <img
-        src="@/assets/login/login-logo.png"
-        alt=""
-        style="width: 120px; height: 31px"
-      /> -->
-      <div v-if="!isCollapse"
-           class="sidebar-logo">
-        <img src="@/assets/login/logo.png"
-             style="width: 120px; height: 31px">
-      </div>
-      <div v-else
-           class="sidebar-logo-mini">
-        <img src="@/assets/login/mini-logo.png">
-      </div>
+  <aside class="sidebar-panel">
+    <div :class="['sidebar-brand', { 'is-collapsed': isCollapse }]">
+      <span class="sidebar-brand__mark">闲</span>
+      <span v-if="!isCollapse" class="sidebar-brand__name">
+        <strong>闲里茶咖</strong>
+        <small>LEISURE BREW</small>
+      </span>
     </div>
+
     <el-scrollbar wrap-class="scrollbar-wrapper">
-      <el-menu :default-openeds="defOpen"
-               :default-active="defAct"
-               :collapse="isCollapse"
-               :background-color="variables.menuBg"
-               :text-color="variables.menuText"
-               :active-text-color="variables.menuActiveText"
-               :unique-opened="false"
-               :collapse-transition="false"
-               mode="vertical">
-        <sidebar-item v-for="route in routes"
-                      :key="route.path"
-                      :item="route"
-                      :base-path="route.path"
-                      :is-collapse="isCollapse" />
-        <!-- <div class="sub-menu">
-          <div class="avatarName">
-            {{ name }}
-          </div>
-          <div class="img">
-            <img
-              src="./../../../assets/icons/btn_close@2x.png"
-              class="outLogin"
-              alt="退出"
-              @click="logout"
-            />
-          </div>
-        </div> -->
+      <el-menu
+        :default-active="$route.path"
+        :collapse="isCollapse"
+        :background-color="variables.menuBg"
+        :text-color="variables.menuText"
+        :active-text-color="variables.menuActiveText"
+        :collapse-transition="false"
+        mode="vertical"
+      >
+        <sidebar-item
+          v-for="route in routes"
+          :key="route.path"
+          :item="route"
+          :base-path="route.path"
+          :is-collapse="isCollapse"
+        />
       </el-menu>
     </el-scrollbar>
-  </div>
+
+    <div v-if="!isCollapse" class="sidebar-note">
+      <span />
+      门店运营台
+    </div>
+  </aside>
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator'
 import { AppModule } from '@/store/modules/app'
-import { UserModule } from '@/store/modules/user'
 import SidebarItem from './SidebarItem.vue'
 import variables from '@/styles/_variables.scss'
-import { getSidebarStatus, setSidebarStatus } from '@/utils/cookies'
-import Cookies from 'js-cookie'
+
 @Component({
   name: 'SideBar',
-  components: {
-    SidebarItem
-  }
+  components: { SidebarItem },
 })
 export default class extends Vue {
-  private restKey: number = 0
-  get name() {
-    return (UserModule.userInfo as any).name
-      ? (UserModule.userInfo as any).name
-      : JSON.parse(Cookies.get('user_info') as any).name
-  }
-  get defOpen() {
-    // const urlArr = this.$route.path.split('/')
-    // const openStr = urlArr.length > 2 ? `/${urlArr[1]}` : '/'
-    let path = ['/']
-    this.routes.forEach((n: any, i: number) => {
-      if (n.meta.roles && n.meta.roles[0] === this.roles[0]) {
-        path.splice(0, 1, n.path)
-      }
-    })
-    return path
-  }
-
-  get defAct() {
-    let path = this.$route.path
-    return path
-  }
-
   get sidebar() {
     return AppModule.sidebar
   }
 
-  get roles() {
-    return UserModule.roles
-  }
-
   get routes() {
-    let routes = JSON.parse(
-      JSON.stringify([...(this.$router as any).options.routes])
+    const rootRoute = (this.$router as any).options.routes.find(
+      (route) => route.path === '/'
     )
-    console.log('-=-=routes=-=-=', routes)
-    console.log('-=-=routes=-=-=', this.roles[0])
-    let menuList = []
-    let menu = routes.find(item => item.path === '/')
-    if (menu) {
-      menuList = menu.children
-    }
-    console.log('-=-=routes=-wwww=-=', routes)
-    return menuList
+    return rootRoute && rootRoute.children ? rootRoute.children : []
   }
 
   get variables() {
@@ -122,42 +64,94 @@ export default class extends Vue {
   get isCollapse() {
     return !this.sidebar.opened
   }
-  private async logout() {
-    this.$store.dispatch('LogOut').then(() => {
-      // location.href = '/'
-      this.$router.replace({ path: '/login' })
-    })
-    // this.$router.push(`/login?redirect=${this.$route.fullPath}`)
-  }
 }
 </script>
 
 <style lang="scss" scoped>
-.logo {
-  text-align: center;
-  background-color: $menuBg;
-  padding: 15px 0 0;
-  height: 60px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  img {
-    display: inline-block;
-  }
-}
-.sidebar-logo-mini {
-  img {
-    width: 30px;
-    height: 30px;
-  }
-}
-.el-scrollbar {
+.sidebar-panel {
+  position: relative;
   height: 100%;
-  background-color: $menuBg;
+  background: $color-sidebar-bg;
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 72px;
+  padding: 0 20px;
+  border-bottom: 1px solid rgba(255, 250, 240, 0.1);
+
+  &.is-collapsed {
+    justify-content: center;
+    padding: 0;
+  }
+
+  &__mark {
+    display: grid;
+    flex: 0 0 38px;
+    width: 38px;
+    height: 38px;
+    color: #fffaf0;
+    background: $color-accent;
+    border-radius: 11px 11px 11px 4px;
+    place-items: center;
+    font-family: 'Songti SC', STSong, SimSun, serif;
+    font-size: 22px;
+    font-weight: 700;
+  }
+
+  &__name {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 2px;
+    color: #fffaf0;
+
+    strong {
+      font-family: 'Songti SC', STSong, SimSun, serif;
+      font-size: 17px;
+      letter-spacing: 0.1em;
+      white-space: nowrap;
+    }
+
+    small {
+      color: rgba(255, 250, 240, 0.58);
+      font-size: 8px;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      white-space: nowrap;
+    }
+  }
+}
+
+.el-scrollbar {
+  height: calc(100% - 116px);
+  background: $menuBg;
 }
 
 .el-menu {
-  border: none;
-  height: calc(95vh - 23px);
   width: 100% !important;
-  padding: 20px 12px 0;
+  padding: 22px 12px 0;
+  border: 0;
+}
+
+.sidebar-note {
+  position: absolute;
+  right: 20px;
+  bottom: 18px;
+  left: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(255, 250, 240, 0.48);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+
+  span {
+    width: 18px;
+    height: 1px;
+    background: $color-accent;
+  }
 }
 </style>

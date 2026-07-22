@@ -1,37 +1,50 @@
-import Cookies from 'js-cookie';
+import Cookies from 'js-cookie'
 
-// App
-const sidebarStatusKey = 'sidebar_status';
-export const getSidebarStatus = () => Cookies.get(sidebarStatusKey);
-export const setSidebarStatus = (sidebarStatus: string) => Cookies.set(sidebarStatusKey, sidebarStatus);
+export interface StoredUser {
+  id?: number
+  name?: string
+  userName?: string
+  token?: string
+  roles?: string[]
+  avatar?: string
+  introduction?: string
+}
 
-// User
-const storeId = 'storeId';
-export const getStoreId = () => Cookies.get(storeId);
-export const setStoreId = (id: string) => Cookies.set(storeId, id);
-export const removeStoreId = () => Cookies.remove(storeId);
+const SIDEBAR_KEY = 'sidebar_status'
+const TOKEN_KEY = 'token'
+const USER_KEY = 'user_info'
+const STORE_KEY = 'storeId'
 
-// User
-const tokenKey = 'token';
-export const getToken = () => Cookies.get(tokenKey);
-export const setToken = (token: string) => Cookies.set(tokenKey, token);
-export const removeToken = () => Cookies.remove(tokenKey);
+export const getSidebarStatus = () => Cookies.get(SIDEBAR_KEY)
+export const setSidebarStatus = (status: string) => Cookies.set(SIDEBAR_KEY, status)
 
-// userInfo
+export const getToken = () => Cookies.get(TOKEN_KEY)
+export const setToken = (token: string) => Cookies.set(TOKEN_KEY, token)
+export const removeToken = () => Cookies.remove(TOKEN_KEY)
 
-const userInfoKey = 'userInfo';
-export const getUserInfo = () => Cookies.get(userInfoKey);
-export const setUserInfo = (useInfor: Object) => Cookies.set(userInfoKey, useInfor);
-export const removeUserInfo = () => Cookies.remove(userInfoKey);
+export const getStoreId = () => Cookies.get(STORE_KEY)
+export const setStoreId = (id: string) => Cookies.set(STORE_KEY, id)
+export const removeStoreId = () => Cookies.remove(STORE_KEY)
 
-// printinfo
+export const getUserInfo = (): StoredUser | null => {
+  const value = Cookies.get(USER_KEY)
+  if (!value) return null
+  try {
+    return JSON.parse(value) as StoredUser
+  } catch (error) {
+    Cookies.remove(USER_KEY)
+    return null
+  }
+}
+export const setUserInfo = (user: StoredUser) =>
+  Cookies.set(USER_KEY, JSON.stringify(user))
+export const removeUserInfo = () => Cookies.remove(USER_KEY)
 
-const printKey = 'print';
-export const getPrint = () => Cookies.get(printKey);
-export const setPrint = (useInfor: Object) => Cookies.set(printKey, useInfor);
-export const removePrint = () => Cookies.remove(printKey);
+const PRINT_KEY = 'print'
+export const getPrint = () => Cookies.get(PRINT_KEY)
+export const setPrint = (value: object) => Cookies.set(PRINT_KEY, JSON.stringify(value))
+export const removePrint = () => Cookies.remove(PRINT_KEY)
 
-// 获取消息
-const newData = 'new';
-export const getNewData = () => Cookies.get(newData);
-export const setNewData = (val: Object) => Cookies.set(newData, val);
+const NOTICE_KEY = 'new'
+export const getNewData = () => Cookies.get(NOTICE_KEY)
+export const setNewData = (value: object) => Cookies.set(NOTICE_KEY, JSON.stringify(value))

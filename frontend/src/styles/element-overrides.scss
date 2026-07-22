@@ -1,0 +1,250 @@
+/* Small, intentional overrides for the legacy Element UI views. */
+
+.el-button,
+.el-input__inner,
+.el-textarea__inner,
+.el-dialog,
+.el-message-box,
+.el-notification {
+  transition-duration: 180ms;
+}
+
+.el-button {
+  border-radius: $radius-md;
+  font-weight: 600;
+}
+
+.el-button--primary,
+.normal-btn,
+.continue {
+  color: #fff !important;
+  background: $color-primary !important;
+  border-color: $color-primary !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.el-button--primary:hover,
+.el-button--primary:focus,
+.normal-btn:hover,
+.normal-btn:focus,
+.continue:hover,
+.continue:focus {
+  color: #fff !important;
+  background: $color-primary-light !important;
+  border-color: $color-primary-light !important;
+}
+
+.el-button--primary:active,
+.normal-btn:active,
+.continue:active {
+  background: $color-primary-dark !important;
+  border-color: $color-primary-dark !important;
+}
+
+.el-button--primary.is-disabled,
+.el-button--primary.is-disabled:hover,
+.el-button--primary.is-disabled:focus {
+  color: #f8f6f0 !important;
+  background: #a9b2ad !important;
+  border-color: #a9b2ad !important;
+}
+
+.el-button--text {
+  color: $color-primary;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.el-button--text:hover,
+.el-button--text:focus {
+  color: $color-primary-light;
+}
+
+.el-form-item__label,
+.el-radio__label {
+  color: $color-text-primary;
+}
+
+.el-input__inner,
+.el-textarea__inner {
+  color: $color-text-primary;
+  background: #fffefa;
+  border-color: $color-border;
+}
+
+.el-input__inner::placeholder,
+.el-textarea__inner::placeholder {
+  color: $color-text-muted;
+}
+
+.el-input__inner:hover,
+.el-textarea__inner:hover {
+  border-color: #b8b5ad;
+}
+
+.el-input__inner:focus,
+.el-textarea__inner:focus,
+.el-select .el-input.is-focus .el-input__inner {
+  border-color: $color-primary !important;
+  box-shadow: 0 0 0 3px rgba(35, 72, 63, 0.1);
+}
+
+.el-checkbox__input.is-checked .el-checkbox__inner,
+.el-checkbox__input.is-indeterminate .el-checkbox__inner,
+.el-radio__input.is-checked .el-radio__inner,
+.el-switch.is-checked .el-switch__core {
+  background-color: $color-primary;
+  border-color: $color-primary;
+}
+
+.el-checkbox__input.is-checked + .el-checkbox__label,
+.el-radio__input.is-checked + .el-radio__label,
+.el-select-dropdown__item.selected,
+.el-date-table td.today span {
+  color: $color-primary;
+}
+
+.el-date-table td.current:not(.disabled) span {
+  background-color: $color-primary;
+}
+
+.el-table {
+  color: $color-text-primary;
+  background: transparent;
+  border-radius: $radius-md;
+}
+
+.el-table::before {
+  background-color: $color-border-light;
+}
+
+.el-table th.el-table__cell,
+.el-table th {
+  color: $color-text-secondary;
+  background: #f3eee4;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.el-table td,
+.el-table th.is-leaf {
+  border-bottom-color: $color-border-light;
+}
+
+.el-table--striped .el-table__body tr.el-table__row--striped td,
+.el-table--enable-row-hover .el-table__body tr:hover > td {
+  background: #faf6ee;
+}
+
+.el-pagination .el-pager li.active {
+  color: #fff !important;
+  background: $color-primary !important;
+  border-radius: $radius-sm;
+}
+
+.el-pagination .el-pager li:hover {
+  color: $color-primary;
+}
+
+.el-dialog,
+.el-message-box {
+  overflow: hidden;
+  background: $color-card-bg;
+  border-radius: $radius-lg !important;
+  box-shadow: $shadow-xl;
+}
+
+.el-dialog__header,
+.el-message-box__header {
+  background: #f3eee4;
+}
+
+.el-notification {
+  background: $color-card-bg;
+  border-color: $color-border;
+  border-radius: $radius-lg !important;
+  box-shadow: $shadow-lg !important;
+}
+
+.el-tabs__active-bar {
+  background-color: $color-primary;
+}
+
+.el-tabs__item.is-active,
+.el-tabs__item:hover {
+  color: $color-primary;
+}
+
+.dashboard-container {
+  margin: 0 !important;
+  padding: 24px 28px 32px !important;
+}
+
+.dashboard-container > .container,
+.addBrand-container > .container {
+  background: $color-card-bg;
+  border: 1px solid $color-border-light;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-sm;
+}
+
+.tableBar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px 10px;
+  min-height: 56px;
+  padding-bottom: 20px;
+}
+
+.tableBar > label {
+  color: $color-text-secondary;
+  font-weight: 500;
+}
+
+.tableBar .tableLab {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
+}
+
+.tableBar .tableLab .el-button,
+.tableBar .tableLab .el-button + .el-button {
+  margin-left: 0 !important;
+}
+
+.tableColumn-status::before {
+  width: 7px;
+  height: 7px;
+  background: $color-success;
+}
+
+.tableColumn-status.stop-use::before {
+  background: $color-text-muted;
+}
+
+.blueBug {
+  color: $color-primary !important;
+}
+
+.delBut {
+  color: $color-danger !important;
+}
+
+.pageList {
+  padding-top: 24px;
+}
+
+.el-message-box__wrapper .el-button--primary {
+  background: $color-primary !important;
+}
+
+@media (max-width: 1280px) {
+  .dashboard-container {
+    padding-right: 20px !important;
+    padding-left: 20px !important;
+  }
+}

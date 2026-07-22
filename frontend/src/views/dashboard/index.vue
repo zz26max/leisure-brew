@@ -1,25 +1,37 @@
 <template>
   <div class="dashboard-container home">
-    <!-- 营业数据 -->
-    <Overview :overviewData="overviewData" />
-    <!-- end -->
-    <!-- 订单管理 -->
-    <Orderview :orderviewData="orderviewData" />
-    <!-- end -->
-    <div class="homeMain">
-      <!-- 饮品总览 -->
-      <CuisineStatistics :dishesData="dishesData" />
-      <!-- end -->
-      <!-- 套餐总览 -->
-      <SetMealStatistics :setMealData="setMealData" />
-      <!-- end -->
+    <section class="store-welcome">
+      <div>
+        <p class="store-welcome__date">
+          {{ todayLabel }}
+        </p>
+        <h2>{{ greeting }}，看看店里今天的节奏。</h2>
+        <p class="store-welcome__copy">
+          先处理正在等待的订单，其余事情慢慢来。
+        </p>
+      </div>
+      <div class="store-welcome__actions">
+        <el-button @click="$router.push('/order')">
+          查看订单
+        </el-button>
+        <el-button type="primary" @click="$router.push('/drink/add')">
+          上新饮品
+        </el-button>
+      </div>
+    </section>
+
+    <Orderview :orderview-data="orderviewData" />
+    <Overview :overview-data="overviewData" />
+
+    <div class="homeMain menu-overview">
+      <CuisineStatistics :dishes-data="dishesData" />
+      <SetMealStatistics :set-meal-data="setMealData" />
     </div>
-    <!-- 订单信息 -->
+
     <OrderList
       :order-statics="orderStatics"
       @getOrderListBy3Status="getOrderListBy3Status"
     />
-    <!-- end -->
   </div>
 </template>
 
@@ -27,23 +39,17 @@
 import { Component, Vue } from 'vue-property-decorator'
 import {
   getBusinessData,
-  getDataOverView, //营业数据
-  getOrderData, //订单管理今日订单
-  getOverviewDishes, //饮品总览
-  getSetMealStatistics, //套餐总览
+  getOrderData,
+  getOverviewDishes,
+  getSetMealStatistics,
 } from '@/api/index'
 import { getOrderListBy } from '@/api/order'
-// 组件
-// 营业数据
 import Overview from './components/overview.vue'
-// 订单管理
 import Orderview from './components/orderview.vue'
-// 饮品总览
 import CuisineStatistics from './components/cuisineStatistics.vue'
-// 套餐总览
 import SetMealStatistics from './components/setMealStatistics.vue'
-// 订单列表
 import OrderList from './components/orderList.vue'
+
 @Component({
   name: 'Dashboard',
   components: {
@@ -55,66 +61,143 @@ import OrderList from './components/orderList.vue'
   },
 })
 export default class extends Vue {
-  private todayData = {} as any
-  private overviewData = {}
+  private overviewData = {} as any
   private orderviewData = {} as any
-  private flag = 2
-  private tateData = []
   private dishesData = {} as any
-  private setMealData = {}
-  private orderListData = []
-  private counts = 0
-  private page: number = 1
-  private pageSize: number = 10
-  private status = 2
+  private setMealData = {} as any
   private orderStatics = {} as any
-  created() {
-    this.init()
+
+  get greeting() {
+    const hour = new Date().getHours()
+    if (hour < 11) return '早上好'
+    if (hour < 14) return '中午好'
+    if (hour < 18) return '下午好'
+    return '晚上好'
   }
-  init() {
-    this.$nextTick(() => {
-      this.getBusinessData()
-      this.getOrderStatisticsData()
-      this.getOverStatisticsData()
-      this.getSetMealStatisticsData()
+
+  get todayLabel() {
+    return new Date().toLocaleDateString('zh-CN', {
+      month: 'long',
+      day: 'numeric',
+      weekday: 'long',
     })
   }
-  // 获取营业数据
-  async getBusinessData() {
-    const data = await getBusinessData()
-    this.overviewData = data.data.data
+
+  created() {
+    this.loadDashboard()
   }
-  // 获取今日订单
-  async getOrderStatisticsData() {
-    const data = await getOrderData()
-    this.orderviewData = data.data.data
+
+  private loadDashboard() {
+    this.getBusinessData()
+    this.getOrderStatisticsData()
+    this.getMenuStatisticsData()
+    this.getOrderListBy3Status()
   }
-  // 获取饮品总览数据
-  async getOverStatisticsData() {
-    const data = await getOverviewDishes()
-    this.dishesData = data.data.data
+
+  private async getBusinessData() {
+    const { data } = await getBusinessData()
+    if (data && String(data.code) === '1') this.overviewData = data.data || {}
   }
-  // 获取套餐总览数据
-  async getSetMealStatisticsData() {
-    const data = await getSetMealStatistics()
-    this.setMealData = data.data.data
+
+  private async getOrderStatisticsData() {
+    const { data } = await getOrderData()
+    if (data && String(data.code) === '1') this.orderviewData = data.data || {}
   }
-  //获取待处理，待派送，派送中数量
-  getOrderListBy3Status() {
-    getOrderListBy({})
-      .then((res) => {
-        if (res.data.code === 1) {
-          this.orderStatics = res.data.data
-        } else {
-          this.$message.error(res.data.msg)
-        }
-      })
-      .catch((err) => {
-        this.$message.error('请求出错了：' + err.message)
-      })
+
+  private async getMenuStatisticsData() {
+    const [dishes, setMeals] = await Promise.all([
+      getOverviewDishes(),
+      getSetMealStatistics(),
+    ])
+    this.dishesData = dishes.data.data || {}
+    this.setMealData = setMeals.data.data || {}
+  }
+
+  private async getOrderListBy3Status() {
+    const { data } = await getOrderListBy({})
+    if (data && String(data.code) === '1') {
+      this.orderStatics = data.data || {}
+    }
   }
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
+.store-welcome {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  min-height: 184px;
+  margin-bottom: 20px;
+  padding: 34px 38px;
+  overflow: hidden;
+  color: #fffaf0;
+  background:
+    radial-gradient(circle at 84% 24%, rgba(184, 101, 59, 0.42), transparent 22%),
+    linear-gradient(120deg, $color-primary-dark, $color-primary 68%, #315c50);
+  border-radius: $radius-xl;
+  box-shadow: $shadow-md;
+
+  &::after {
+    position: absolute;
+    top: -72px;
+    right: -28px;
+    width: 240px;
+    height: 240px;
+    border: 1px solid rgba(255, 250, 240, 0.12);
+    border-radius: 50%;
+    content: '';
+    box-shadow:
+      0 0 0 32px rgba(255, 250, 240, 0.03),
+      0 0 0 64px rgba(255, 250, 240, 0.025);
+  }
+
+  > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  &__date {
+    margin: 0 0 9px;
+    color: rgba(255, 250, 240, 0.66);
+    font-size: 12px;
+    letter-spacing: 0.12em;
+  }
+
+  h2 {
+    margin: 0;
+    font-family: 'Songti SC', STSong, SimSun, serif;
+    font-size: 29px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+
+  &__copy {
+    margin: 12px 0 0;
+    color: rgba(255, 250, 240, 0.72);
+    font-size: 13px;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 10px;
+
+    .el-button {
+      color: #fffaf0;
+      background: rgba(255, 250, 240, 0.08);
+      border-color: rgba(255, 250, 240, 0.3);
+    }
+
+    .el-button--primary {
+      color: $color-primary-dark !important;
+      background: #fffaf0 !important;
+      border-color: #fffaf0 !important;
+    }
+  }
+}
+
+.menu-overview {
+  gap: 20px;
+}
 </style>

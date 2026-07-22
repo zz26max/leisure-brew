@@ -1,144 +1,118 @@
-import { VuexModule, Module, Action, Mutation, getModule } from 'vuex-module-decorators'
-import { login,userLogout } from '@/api/employee'
-import { getToken, setToken, removeToken,getStoreId, setStoreId, removeStoreId, setUserInfo, getUserInfo, removeUserInfo } from '@/utils/cookies'
-import store from '@/store'
+import { Action, getModule, Module, Mutation, VuexModule } from 'vuex-module-decorators'
 import Cookies from 'js-cookie'
-import { Message } from 'element-ui'
+import { login, userLogout } from '@/api/employee'
+import {
+  getStoreId,
+  getToken,
+  getUserInfo,
+  removeStoreId,
+  removeToken,
+  removeUserInfo,
+  setStoreId,
+  setToken,
+  setUserInfo,
+  StoredUser,
+} from '@/utils/cookies'
+import store from '@/store'
+
 export interface IUserState {
   token: string
   name: string
   avatar: string
   storeId: string
   introduction: string
-  userInfo: any
+  userInfo: StoredUser
   roles: string[]
   username: string
 }
 
-@Module({ 'dynamic': true, store, 'name': 'user' })
+@Module({ dynamic: true, store, name: 'user' })
 class User extends VuexModule implements IUserState {
   public token = getToken() || ''
-  public name = ''
-  public avatar = ''
-  // @ts-ignore
-  public storeId: string = getStoreId() || ''
-  public introduction = ''
-  public userInfo = {}
-  public roles: string[] = []
+  public storeId = getStoreId() || ''
+  public userInfo = getUserInfo() || {}
+  public name = this.userInfo.name || ''
   public username = Cookies.get('username') || ''
+  public avatar = ''
+  public introduction = ''
+  public roles: string[] = this.token ? ['admin'] : []
 
   @Mutation
-  private SET_TOKEN(token: string) {
-    this.token = token
+  private SET_TOKEN(token: string) { this.token = token }
+
+  @Mutation
+  private SET_USER(user: StoredUser) {
+    this.userInfo = { ...user }
+    this.name = user.name || ''
   }
 
   @Mutation
-  private SET_NAME(name: string) {
-    this.name = name
-  }
+  private SET_USERNAME(username: string) { this.username = username }
 
   @Mutation
-  private SET_USERINFO(userInfo: any) {
-    this.userInfo = { ...userInfo }
-  }
+  private SET_ROLES(roles: string[]) { this.roles = roles }
 
   @Mutation
-  private SET_AVATAR(avatar: string) {
-    this.avatar = avatar
-  }
-
-  @Mutation
-  private SET_INTRODUCTION(introduction: string) {
-    this.introduction = introduction
-  }
-
-  @Mutation
-  private SET_ROLES(roles: string[]) {
-    this.roles = roles
-  }
-
-  @Mutation
-  private SET_STOREID(storeId: string) {
-    this.storeId = storeId
-  }
-  @Mutation
-  private SET_USERNAME(name: string) {
-    this.username = name
-    }
+  private SET_STORE_ID(storeId: string) { this.storeId = storeId }
 
   @Action
-  public async Login(userInfo: { username: string, password: string }) {
-    let { username, password } = userInfo
-    username = username.trim()
+  public async Login(credentials: { username: string; password: string }) {
+    const username = credentials.username.trim()
+    const response = await login({ username, password: credentials.password })
+    const result = response.data
+    if (Number(result.code) !== 1) throw new Error(result.msg || '登录失败')
+
+    const user = result.data as StoredUser
     this.SET_USERNAME(username)
+    this.SET_TOKEN(user.token || '')
+    this.SET_USER(user)
+    this.SET_ROLES(['admin'])
     Cookies.set('username', username)
-    const { data } = await login({ username, password })
-    if (String(data.code) === '1') {
-      // const dataParams = {
-      //   // status: 200,
-      //   token: data.data.token,
-      //   // msg: '登录成功',
-      //   // ...data.data
-      //   ...data
-      // }
-      this.SET_TOKEN(data.data.token)
-      setToken(data.data.token)
-      this.SET_USERINFO(data.data)
-      Cookies.set('user_info', data.data)
-      return data
-    } else {
-      return Message.error(data.msg)
-    }
+    setToken(user.token || '')
+    setUserInfo(user)
+    return result
   }
 
   @Action
-  public ResetToken () {
+  public ResetToken() {
     removeToken()
+    removeUserInfo()
     this.SET_TOKEN('')
+    this.SET_USER({})
     this.SET_ROLES([])
   }
 
   @Action
-  public async changeStore(data: any) {
-    this.SET_STOREID = data.data
+  public changeStore(data: { data: string; authorization: string }) {
+    this.SET_STORE_ID(data.data)
     this.SET_TOKEN(data.authorization)
     setStoreId(data.data)
     setToken(data.authorization)
   }
 
   @Action
-  public async GetUserInfo () {
-    if (this.token === '') {
-      throw Error('GetUserInfo: token is undefined!')
-    }
-
-    const data = JSON.parse(<string>getUserInfo()) //  { roles: ['admin'], name: 'zhangsan', avatar: '/login', introduction: '' }
-    if (!data) {
-      throw Error('Verification failed, please Login again.')
-    }
-
-    const { roles, name, avatar, introduction, applicant, storeManagerName, storeId='' } = data // data.user
-    // roles must be a non-empty array
-    if (!roles || roles.length <= 0) {
-      throw Error('GetUserInfo: roles must be a non-null array!')
-    }
-
-    this.SET_ROLES(roles)
-    this.SET_USERINFO(data)
-    this.SET_NAME(name || applicant || storeManagerName)
-    this.SET_AVATAR(avatar)
-    this.SET_INTRODUCTION(introduction)
+  public GetUserInfo() {
+    const user = getUserInfo()
+    if (!this.token || !user) throw new Error('登录信息已失效')
+    this.SET_USER(user)
+    this.SET_ROLES(['admin'])
+    return user
   }
 
   @Action
-  public async LogOut () {
-    const { data } = await userLogout({})
-    removeToken()
-    this.SET_TOKEN('')
-    this.SET_ROLES([])
-    Cookies.remove('username')
-    Cookies.remove('user_info')
-    removeUserInfo()
+  public async LogOut() {
+    try {
+      await userLogout()
+    } finally {
+      removeToken()
+      removeUserInfo()
+      removeStoreId()
+      Cookies.remove('username')
+      this.SET_TOKEN('')
+      this.SET_USER({})
+      this.SET_ROLES([])
+      this.SET_STORE_ID('')
+    }
   }
 }
 

@@ -1,120 +1,147 @@
 <template>
-  <div class="login">
-    <div class="login-box">
-      <img src="@/assets/login/login-l.png" alt="" />
-      <div class="login-form">
-        <el-form ref="loginForm" :model="loginForm" :rules="loginRules">
-          <div class="login-form-title">
-            <img
-              src="@/assets/login/icon_logo.png"
-              style="width: 149px; height: 38px"
-              alt=""
-            />
+  <main class="login-page">
+    <section class="login-shell" aria-label="闲里茶咖门店运营台登录">
+      <div class="brand-panel">
+        <div class="brand-panel__art" aria-hidden="true">
+          <span class="brand-panel__sun" />
+          <span class="brand-panel__leaf brand-panel__leaf--one" />
+          <span class="brand-panel__leaf brand-panel__leaf--two" />
+          <span class="brand-panel__steam brand-panel__steam--one" />
+          <span class="brand-panel__steam brand-panel__steam--two" />
+          <span class="brand-panel__cup" />
+          <span class="brand-panel__saucer" />
+        </div>
+        <div class="brand-panel__shade" />
+        <div class="brand-panel__content">
+          <div class="brand-lockup brand-lockup--light">
+            <span class="brand-lockup__mark">闲</span>
+            <span class="brand-lockup__name">
+              <strong>闲里茶咖</strong>
+              <small>LEISURE BREW</small>
+            </span>
           </div>
-          <div class="login-form-subtitle">
-            <p class="brand-name">闲里茶咖</p>
-            <p class="brand-desc">Leisure Brew Admin</p>
+          <div class="brand-panel__message">
+            <p>忙里偷闲，杯中有序。</p>
+            <span>把每一杯认真做好，也把每一天从容打理。</span>
           </div>
+        </div>
+      </div>
+
+      <div class="login-panel">
+        <el-form
+          ref="loginForm"
+          :model="loginForm"
+          :rules="loginRules"
+          class="login-form"
+          @submit.native.prevent
+        >
+          <div class="login-form__eyebrow">
+            门店运营台
+          </div>
+          <h1>欢迎回来</h1>
+          <p class="login-form__intro">
+            登录后查看今日店况与待处理订单。
+          </p>
+
           <el-form-item prop="username">
+            <label class="field-label" for="username">账号</label>
             <el-input
-              v-model="loginForm.username"
+              id="username"
+              v-model.trim="loginForm.username"
               type="text"
-              auto-complete="off"
-              placeholder="账号"
+              autocomplete="username"
+              placeholder="请输入账号"
               prefix-icon="iconfont icon-user"
             />
           </el-form-item>
+
           <el-form-item prop="password">
+            <label class="field-label" for="password">密码</label>
             <el-input
+              id="password"
               v-model="loginForm.password"
               type="password"
-              placeholder="密码"
+              autocomplete="current-password"
+              placeholder="请输入密码"
               prefix-icon="iconfont icon-lock"
+              show-password
               @keyup.enter.native="handleLogin"
             />
           </el-form-item>
-          <el-form-item style="width: 100%">
-            <el-button
-              :loading="loading"
-              class="login-btn"
-              size="medium"
-              type="primary"
-              style="width: 100%"
-              @click.native.prevent="handleLogin"
-            >
-              <span v-if="!loading">登录</span>
-              <span v-else>登录中...</span>
-            </el-button>
-          </el-form-item>
+
+          <el-button
+            :loading="loading"
+            class="login-button"
+            type="primary"
+            native-type="submit"
+            @click="handleLogin"
+          >
+            {{ loading ? '正在进入…' : '进入门店' }}
+          </el-button>
+
+          <p class="login-form__note">
+            仅限已授权的门店伙伴使用
+          </p>
         </el-form>
       </div>
-    </div>
-  </div>
+    </section>
+  </main>
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator'
-import { Route } from 'vue-router'
-import { Form as ElForm, Input } from 'element-ui'
+import { Component, Vue } from 'vue-property-decorator'
+import { Form as ElForm } from 'element-ui'
 import { UserModule } from '@/store/modules/user'
-import { isValidUsername } from '@/utils/validate'
 
 @Component({
   name: 'Login',
 })
 export default class extends Vue {
-  private validateUsername = (rule: any, value: string, callback: Function) => {
-    if (!value) {
-      callback(new Error('请输入用户名'))
-    } else {
-      callback()
-    }
-  }
-  private validatePassword = (rule: any, value: string, callback: Function) => {
-    if (value.length < 6) {
-      callback(new Error('密码必须在6位以上'))
-    } else {
-      callback()
-    }
-  }
   private loginForm = {
-    username: 'admin',
-    password: '123456',
-  } as {
-    username: String
-    password: String
+    username: '',
+    password: '',
   }
 
-  loginRules = {
+  private loading = false
+
+  private validateUsername = (
+    rule: unknown,
+    value: string,
+    callback: (error?: Error) => void
+  ) => {
+    callback(value ? undefined : new Error('请输入账号'))
+  }
+
+  private validatePassword = (
+    rule: unknown,
+    value: string,
+    callback: (error?: Error) => void
+  ) => {
+    if (!value) {
+      callback(new Error('请输入密码'))
+      return
+    }
+    callback(value.length >= 6 ? undefined : new Error('密码至少需要 6 位'))
+  }
+
+  private loginRules = {
     username: [{ validator: this.validateUsername, trigger: 'blur' }],
     password: [{ validator: this.validatePassword, trigger: 'blur' }],
   }
-  private loading = false
-  private redirect?: string
 
-  @Watch('$route', { immediate: true })
-  private onRouteChange(route: Route) {}
-
-  // 登录
   private handleLogin() {
-    ;(this.$refs.loginForm as ElForm).validate(async (valid: boolean) => {
-      if (valid) {
-        this.loading = true
-        await UserModule.Login(this.loginForm as any)
-          .then((res: any) => {
-            if (String(res.code) === '1') {
-              this.$router.push('/')
-            } else {
-              // this.$message.error(res.msg)
-              this.loading = false
-            }
-          })
-          .catch(() => {
-            // this.$message.error('用户名或密码错误！')
-            this.loading = false
-          })
-      } else {
-        return false
+    const form = this.$refs.loginForm as ElForm
+    form.validate(async (valid: boolean) => {
+      if (!valid) return
+
+      this.loading = true
+      try {
+        const result: any = await UserModule.Login(this.loginForm)
+        if (String(result.code) === '1') {
+          await this.$router.push('/')
+        }
+      } finally {
+        this.loading = false
       }
     })
   }
@@ -122,164 +149,300 @@ export default class extends Vue {
 </script>
 
 <style lang="scss">
-.login {
-  display: flex;
-  justify-content: center;
+.login-page {
+  display: grid;
+  min-height: 100%;
+  place-items: center;
+  padding: 48px;
+  background:
+    radial-gradient(circle at 12% 16%, rgba(184, 101, 59, 0.1), transparent 28%),
+    linear-gradient(145deg, #f8f4eb 0%, $color-page-bg 62%, #eee5d5 100%);
+}
+
+.login-shell {
+  display: grid;
+  grid-template-columns: minmax(480px, 1.25fr) minmax(390px, 0.75fr);
+  width: min(1080px, calc(100vw - 96px));
+  min-height: 620px;
+  overflow: hidden;
+  background: $color-card-bg;
+  border: 1px solid rgba(35, 72, 63, 0.12);
+  border-radius: 28px;
+  box-shadow: 0 30px 90px rgba(35, 48, 41, 0.16);
+}
+
+.brand-panel {
+  position: relative;
+  min-height: 620px;
+  overflow: hidden;
+  background: $color-primary-dark;
+
+  &__art,
+  &__shade {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  &__art {
+    background:
+      linear-gradient(145deg, transparent 58%, rgba(246, 241, 231, 0.05) 58%),
+      radial-gradient(circle at 18% 24%, rgba(246, 241, 231, 0.09), transparent 26%),
+      $color-primary-dark;
+  }
+
+  &__sun {
+    position: absolute;
+    top: 118px;
+    right: 82px;
+    width: 220px;
+    height: 220px;
+    background: rgba(184, 101, 59, 0.72);
+    border-radius: 50%;
+  }
+
+  &__cup {
+    position: absolute;
+    right: 108px;
+    bottom: 122px;
+    width: 210px;
+    height: 126px;
+    background: #e8deca;
+    border-radius: 12px 12px 88px 88px;
+    box-shadow: inset 0 12px rgba(255, 252, 247, 0.5);
+
+    &::after {
+      position: absolute;
+      top: 18px;
+      right: -56px;
+      width: 64px;
+      height: 70px;
+      border: 18px solid #e8deca;
+      border-left: 0;
+      border-radius: 0 44px 44px 0;
+      content: '';
+    }
+  }
+
+  &__saucer {
+    position: absolute;
+    right: 70px;
+    bottom: 100px;
+    width: 300px;
+    height: 32px;
+    background: rgba(232, 222, 202, 0.76);
+    border-radius: 50%;
+  }
+
+  &__steam {
+    position: absolute;
+    right: 188px;
+    bottom: 270px;
+    width: 24px;
+    height: 90px;
+    border-left: 3px solid rgba(246, 241, 231, 0.6);
+    border-radius: 50%;
+    transform: rotate(12deg);
+
+    &--two {
+      right: 244px;
+      bottom: 250px;
+      height: 116px;
+      transform: rotate(-10deg);
+    }
+  }
+
+  &__leaf {
+    position: absolute;
+    width: 92px;
+    height: 42px;
+    background: #768f78;
+    border-radius: 100% 0 100% 0;
+    transform: rotate(32deg);
+
+    &--one { top: 92px; left: 112px; }
+    &--two { top: 148px; left: 174px; transform: rotate(112deg) scale(0.72); }
+  }
+
+  &__shade {
+    background:
+      linear-gradient(180deg, rgba(18, 48, 41, 0.28), rgba(18, 48, 41, 0.78)),
+      linear-gradient(90deg, rgba(18, 48, 41, 0.3), transparent 70%);
+  }
+
+  &__content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    padding: 44px 48px 52px;
+  }
+
+  &__message {
+    max-width: 430px;
+    color: #fdf7eb;
+
+    p {
+      margin: 0 0 14px;
+      font-family: 'Songti SC', STSong, SimSun, serif;
+      font-size: 38px;
+      line-height: 1.25;
+      letter-spacing: 0.08em;
+    }
+
+    span {
+      color: rgba(253, 247, 235, 0.76);
+      font-size: 14px;
+      line-height: 1.8;
+    }
+  }
+}
+
+.brand-lockup {
+  display: inline-flex;
   align-items: center;
-  height: 100%;
-  background: linear-gradient(135deg, #FF7A00 0%, #FF6B00 30%, #E06900 70%, #CC5500 100%);
-  position: relative;
-  overflow: hidden;
+  gap: 12px;
 
-  &::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    right: -20%;
-    width: 600px;
-    height: 600px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 50%;
-    pointer-events: none;
+  &__mark {
+    display: grid;
+    width: 42px;
+    height: 42px;
+    color: #fffaf0;
+    background: $color-accent;
+    border-radius: 12px 12px 12px 4px;
+    place-items: center;
+    font-family: 'Songti SC', STSong, SimSun, serif;
+    font-size: 24px;
+    font-weight: 700;
   }
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: -30%;
-    left: -10%;
-    width: 400px;
-    height: 400px;
-    background: rgba(255, 255, 255, 0.04);
-    border-radius: 50%;
-    pointer-events: none;
+
+  &__name {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+
+    strong {
+      font-family: 'Songti SC', STSong, SimSun, serif;
+      font-size: 20px;
+      letter-spacing: 0.12em;
+    }
+
+    small {
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.24em;
+    }
   }
-}
 
-.login-box {
-  width: 1000px;
-  height: 474.38px;
-  border-radius: 16px;
-  display: flex;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  overflow: hidden;
-  position: relative;
-  z-index: 1;
-
-  > img {
-    width: 60%;
-    height: auto;
-    object-fit: cover;
+  &--light {
+    color: #fffaf0;
   }
 }
 
-.title {
-  margin: 0px auto 10px auto;
-  text-align: left;
-  color: #707070;
+.login-panel {
+  display: grid;
+  padding: 58px 64px;
+  background: $color-card-bg;
+  place-items: center;
 }
 
 .login-form {
-  background: #ffffff;
-  width: 40%;
-  border-radius: 0px 16px 16px 0px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  .el-form {
-    width: 240px;
+  width: 100%;
+  max-width: 330px;
+
+  &__eyebrow {
+    margin-bottom: 14px;
+    color: $color-accent;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
   }
+
+  h1 {
+    margin: 0;
+    color: $color-text-primary;
+    font-family: 'Songti SC', STSong, SimSun, serif;
+    font-size: 34px;
+    line-height: 1.3;
+    letter-spacing: 0.04em;
+  }
+
+  &__intro {
+    margin: 10px 0 36px;
+    color: $color-text-secondary;
+    line-height: 1.7;
+  }
+
   .el-form-item {
     margin-bottom: 24px;
   }
-  .el-form-item.is-error .el-input__inner {
-    border: 1px solid #fd7065 !important;
-    background: #fff !important;
+
+  .el-form-item__content {
+    line-height: normal;
   }
-  .input-icon {
-    height: 32px;
-    width: 18px;
-    margin-left: -2px;
+
+  .field-label {
+    display: block;
+    margin-bottom: 9px;
+    color: $color-text-primary;
+    font-size: 13px;
+    font-weight: 600;
   }
+
   .el-input__inner {
-    border: 1px solid #E5E7EB;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 400;
-    color: #1F2937;
-    height: 42px;
-    line-height: 42px;
-    padding-left: 36px;
-    transition: all 0.2s ease;
-    &:focus {
-      border-color: #FF7A00;
-      box-shadow: 0 0 0 3px rgba(255, 122, 0, 0.1);
-    }
+    height: 48px;
+    padding-left: 42px;
+    line-height: 48px;
+    background: #fffefa;
+    border-radius: $radius-md;
   }
+
   .el-input__prefix {
-    left: 12px;
-    color: #9CA3AF;
+    left: 13px;
+    color: $color-text-muted;
   }
-  .el-input--prefix .el-input__inner {
-    padding-left: 36px;
+
+  .el-input__icon {
+    line-height: 48px;
   }
-  .el-input__inner::placeholder {
-    color: #9CA3AF;
+
+  .login-button {
+    width: 100%;
+    height: 48px;
+    margin-top: 4px;
+    font-size: 15px;
+    letter-spacing: 0.08em;
   }
-  .el-form-item--medium .el-form-item__content {
-    line-height: 42px;
-  }
-  .el-input--medium .el-input__icon {
-    line-height: 42px;
+
+  &__note {
+    margin: 20px 0 0;
+    color: $color-text-muted;
+    font-size: 12px;
+    text-align: center;
   }
 }
 
-.login-btn {
-  border-radius: 8px;
-  padding: 12px 20px !important;
-  margin-top: 6px;
-  font-weight: 600;
-  font-size: 15px;
-  border: 0;
-  color: #FFFFFF;
-  background: linear-gradient(135deg, #FF7A00, #E06900);
-  transition: all 0.3s ease;
-  letter-spacing: 2px;
-  &:hover,
-  &:focus {
-    background: linear-gradient(135deg, #FF9F43, #FF7A00);
-    color: #FFFFFF;
-    box-shadow: 0 4px 15px rgba(255, 122, 0, 0.4);
-    transform: translateY(-1px);
+@media (max-width: 1100px) {
+  .login-page {
+    padding: 32px;
   }
-}
-.login-form-title {
-  height: 36px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 12px;
-  .title-label {
-    font-weight: 500;
-    font-size: 20px;
-    color: #1F2937;
-    margin-left: 10px;
+
+  .login-shell {
+    grid-template-columns: 1fr 420px;
+    width: calc(100vw - 64px);
   }
-}
-.login-form-subtitle {
-  text-align: center;
-  margin-bottom: 32px;
-  .brand-name {
-    font-size: 18px;
-    font-weight: 700;
-    color: #1F2937;
-    margin: 0 0 4px;
-    letter-spacing: 1px;
+
+  .brand-panel__content {
+    padding-right: 36px;
+    padding-left: 36px;
   }
-  .brand-desc {
-    font-size: 12px;
-    color: #9CA3AF;
-    margin: 0;
-    letter-spacing: 0.5px;
+
+  .login-panel {
+    padding-right: 44px;
+    padding-left: 44px;
   }
 }
 </style>

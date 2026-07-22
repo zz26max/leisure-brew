@@ -16,7 +16,10 @@ export const CHART_COLORS = {
 export function primaryAreaGradient(): object {
   return {
     type: 'linear',
-    x: 0, y: 0, x2: 0, y2: 1,
+    x: 0,
+y: 0,
+x2: 0,
+y2: 1,
     colorStops: [
       { offset: 0, color: 'rgba(255, 122, 0, 0.25)' },
       { offset: 1, color: 'rgba(255, 122, 0, 0.02)' }
@@ -27,7 +30,10 @@ export function primaryAreaGradient(): object {
 export function secondaryAreaGradient(): object {
   return {
     type: 'linear',
-    x: 0, y: 0, x2: 0, y2: 1,
+    x: 0,
+y: 0,
+x2: 0,
+y2: 1,
     colorStops: [
       { offset: 0, color: 'rgba(253, 127, 127, 0.2)' },
       { offset: 1, color: 'rgba(253, 127, 127, 0.02)' }

@@ -11,8 +11,7 @@ import '@/styles/home.scss'
 import 'vue-area-linkage/dist/index.css'
 
 import * as echarts from 'echarts'
-// 闲里茶咖自定义样式
-import '@/styles/newRJWMsystem.scss'
+import '@/styles/element-overrides.scss'
 import '@/styles/icon/iconfont.css'
 import App from '@/App.vue'
 import store from '@/store'
@@ -34,7 +33,7 @@ Vue.prototype.moment = moment
 Vue.prototype.$checkProcessEnv = checkProcessEnv
 const routerPush = Router.prototype.push
 Router.prototype.push = function push(location) {
- return routerPush.call(this, location).catch(error=> error)
+ return routerPush.call(this, location).catch(error => error)
 }
 Vue.prototype.$echarts = echarts
 new Vue({

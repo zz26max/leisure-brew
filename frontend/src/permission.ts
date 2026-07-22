@@ -1,27 +1,22 @@
 import router from './router'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
-import { Message } from 'element-ui'
 import { Route } from 'vue-router'
-import { UserModule } from '@/store/modules/user'
-import Cookies from 'js-cookie'
+import { getToken } from '@/utils/cookies'
 
-NProgress.configure({ 'showSpinner': false })
+NProgress.configure({ showSpinner: false })
 
-router.beforeEach(async (to: Route, _: Route, next: any) => {
+router.beforeEach((to: Route, _: Route, next: any) => {
   NProgress.start()
-  if (Cookies.get('token')) {
+  if (getToken() || to.meta.notNeedAuth) {
     next()
   } else {
-    if (!to.meta.notNeedAuth) {
-      next('/login')
-    } else {
-      next()
-    }
+    next({ path: '/login', query: { redirect: to.fullPath } })
   }
 })
 
 router.afterEach((to: Route) => {
   NProgress.done()
-  document.title = to.meta.title
+  const pageTitle = to.meta && to.meta.title
+  document.title = pageTitle ? `${pageTitle} · 闲里茶咖` : '闲里茶咖 · 门店运营台'
 })

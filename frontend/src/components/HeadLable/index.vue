@@ -1,34 +1,27 @@
 <template>
-  <div class="HeadLable">
-    <span
-      v-if="goback"
-      class="goBack"
-      @click="goBack()"
-    ><img
-      src="@/assets/icons/btn_back@2x.png"
-      alt=""
-    > 返回</span>
-    <span v-if="!butList">{{ title }}</span>
-    <div v-if="butList">
+  <header class="page-heading">
+    <button v-if="goback" type="button" class="page-heading__back" @click="goBack">
+      <i class="el-icon-back" />
+      返回
+    </button>
+    <div v-if="!butList" class="page-heading__title">
+      <small>LEISURE BREW</small>
+      <h2>{{ title }}</h2>
+    </div>
+    <div v-else class="page-heading__content">
       <slot />
     </div>
-  </div>
+  </header>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
-@Component({
-  'name': 'Hamburger'
-})
+@Component({ name: 'PageHeading' })
 export default class extends Vue {
-  @Prop({ 'default': false }) private goback!: boolean
-  @Prop({ 'default': false }) private butList!: boolean
-  @Prop({ 'default': '集团管理' }) private title!: string
-
-  private toggleClick() {
-    this.$emit('toggleClick')
-  }
+  @Prop({ default: false }) private goback!: boolean
+  @Prop({ default: false }) private butList!: boolean
+  @Prop({ default: '' }) private title!: string
 
   private goBack() {
     this.$router.go(-1)
@@ -37,47 +30,56 @@ export default class extends Vue {
 </script>
 
 <style lang="scss" scoped>
-  .HeadLable{
-    // position: absolute;
-    background: #fff;
-    color: #333333;
-    height: 64px;
-    font-size: 16px;
-    // width: 300px;
-    padding-left: 22px;
-    line-height: 64px;
-    font-weight: 700;
-    margin-bottom: 15px;
-    top:0px;
-    left: 0px;
-    opacity: 0;
-    animation: opacity 500ms ease-out 800ms forwards;
-    .goBack{
-      border-right: solid 1px #d8dde3;
-      padding-right: 14px;
-      margin-right: 14px;
-      font-size: 16px;
-      color: #333333;
-      cursor: pointer;
-      font-weight: 400;
-      img{
-        position: relative;
-        top:24px;
-        margin-right: 5px;
-        width: 18px;
-        height: 18px;
-        float: left;
-      }
+.page-heading {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  min-height: 78px;
+  margin-bottom: 18px;
+  padding: 14px 24px;
+  background: $color-card-bg;
+  border: 1px solid $color-border-light;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-sm;
+
+  &__back {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 14px 8px 0;
+    color: $color-text-secondary;
+    background: transparent;
+    border: 0;
+    border-right: 1px solid $color-border;
+    cursor: pointer;
+    font: inherit;
+
+    &:hover {
+      color: $color-primary;
     }
   }
-  @keyframes opacity {
-     0% {
-       opacity: 0;
-       left: 80px;
-     }
-     100% {
-       opacity: 1;
-       left: 0;
-     }
-   }
+
+  &__title {
+    small {
+      display: block;
+      margin-bottom: 3px;
+      color: $color-accent;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+    }
+
+    h2 {
+      margin: 0;
+      color: $color-text-primary;
+      font-family: 'Songti SC', STSong, SimSun, serif;
+      font-size: 20px;
+      letter-spacing: 0.04em;
+    }
+  }
+
+  &__content {
+    width: 100%;
+  }
+}
 </style>

@@ -16,8 +16,9 @@
   "window": {
     "navigationBarTextStyle": "white",
     "navigationBarTitleText": "闲里茶咖",
-    "navigationBarBackgroundColor": "#E95F3C",
-    "backgroundColor": "#F8F8F8"
+    "navigationBarBackgroundColor": "#23483F",
+    "backgroundColor": "#F6F1E7",
+    "backgroundTextStyle": "dark"
   },
   "usingComponents": {},
   "sitemapLocation": "sitemap.json"

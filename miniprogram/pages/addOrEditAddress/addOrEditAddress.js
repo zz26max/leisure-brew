@@ -391,7 +391,7 @@ var _api = __webpack_require__(/*! ../api/api.js */ 24);function ownKeys(object,
       this.delId = "";
       this.showDel = true;
       uni.setNavigationBarTitle({
-        title: "编辑收获地址" });
+        title: "编辑收货地址" });
 
       // 保存将要删除的id
       this.delId = options.id;

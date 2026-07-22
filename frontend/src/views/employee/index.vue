@@ -1,207 +1,103 @@
 <template>
-  <div class="dashboard-container">
-    <div class="container">
-      <div class="tableBar">
-        <label style="margin-right: 5px">员工姓名：</label>
-        <el-input
-          v-model="input"
-          placeholder="请输入员工姓名"
-          style="width: 15%"
-          clearable
-          @clear="init"
-          @keyup.enter.native="initFun"
-        />
-        <el-button class="normal-btn continue" @click="init(true)"
-          >查询</el-button
-        >
-        <el-button
-          type="primary"
-          style="float: right"
-          @click="addEmployeeHandle('add')"
-        >
-          + 添加员工
+  <div class="page-shell">
+    <section class="content-card">
+      <div class="table-toolbar">
+        <el-input v-model.trim="keyword" placeholder="按姓名查找员工" clearable @clear="search" @keyup.enter.native="search" />
+        <el-button @click="search">
+          查询
+        </el-button>
+        <el-button class="add-button" type="primary" @click="$router.push('/employee/add')">
+          添加员工
         </el-button>
       </div>
-      <el-table
-        :data="tableData"
-        stripe
-        v-if="tableData.length"
-        class="tableBox"
-      >
+
+      <el-table v-if="employees.length" :data="employees" stripe>
         <el-table-column prop="name" label="员工姓名" />
-        <el-table-column prop="username" label="账号" />
+        <el-table-column prop="username" label="登录账号" />
         <el-table-column prop="phone" label="手机号" />
-        <el-table-column label="账号状态">
+        <el-table-column label="账号状态" width="120">
           <template slot-scope="scope">
-            <div
-              class="tableColumn-status"
-              :class="{ 'stop-use': String(scope.row.status) === '0' }"
-            >
-              {{ String(scope.row.status) === '0' ? '禁用' : '启用' }}
-            </div>
+            <span :class="['status-pill', { muted: scope.row.status === 0 }]">
+              {{ scope.row.status === 1 ? '正常' : '已停用' }}
+            </span>
           </template>
         </el-table-column>
-        <el-table-column prop="updateTime" label="最后操作时间" />
-        <el-table-column label="操作" width="160" align="center">
+        <el-table-column prop="updateTime" label="最近更新" />
+        <el-table-column label="操作" width="150" align="right">
           <template slot-scope="scope">
-            <el-button
-              type="text"
-              size="small"
-              class="blueBug"
-              :class="{ 'disabled-text': scope.row.username === 'admin' }"
-              :disabled="scope.row.username === 'admin'"
-              @click="addEmployeeHandle(scope.row.id, scope.row.username)"
-            >
-              修改
+            <el-button type="text" :disabled="scope.row.username === 'admin'" @click="edit(scope.row)">
+              编辑
             </el-button>
-            <el-button
-              :disabled="scope.row.username === 'admin'"
-              type="text"
-              size="small"
-              class="non"
-              :class="{
-                'disabled-text': scope.row.username === 'admin',
-                blueBug: scope.row.status == '0',
-                delBut: scope.row.status != '0',
-              }"
-              @click="statusHandle(scope.row)"
-            >
-              {{ scope.row.status == '1' ? '禁用' : '启用' }}
+            <el-button type="text" :disabled="scope.row.username === 'admin'" @click="toggleStatus(scope.row)">
+              {{ scope.row.status === 1 ? '停用' : '启用' }}
             </el-button>
           </template>
         </el-table-column>
       </el-table>
-      <Empty v-else :is-search="isSearch" />
+      <Empty v-else :is-search="Boolean(keyword)" />
+
       <el-pagination
-        class="pageList"
-        :page-sizes="[10, 20, 30, 40]"
+        :current-page="page"
         :page-size="pageSize"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="counts"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
+        :total="total"
+        layout="total, prev, pager, next"
+        @current-change="changePage"
       />
-    </div>
+    </section>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import HeadLable from '@/components/HeadLable/index.vue'
-import { getEmployeeList, enableOrDisableEmployee } from '@/api/employee'
-import { UserModule } from '@/store/modules/user'
-import InputAutoComplete from '@/components/InputAutoComplete/index.vue'
 import Empty from '@/components/Empty/index.vue'
+import { enableOrDisableEmployee, getEmployeeList } from '@/api/employee'
 
-@Component({
-  name: 'Employee',
-  components: {
-    HeadLable,
-    InputAutoComplete,
-    Empty,
-  },
-})
+@Component({ name: 'Employee', components: { Empty } })
 export default class extends Vue {
-  private input: any = ''
-  private counts: number = 0
-  private page: number = 1
-  private pageSize: number = 10
-  private tableData = []
-  private id = ''
-  private status = ''
-  private isSearch: boolean = false
+  private keyword = ''
+  private page = 1
+  private pageSize = 10
+  private total = 0
+  private employees: any[] = []
 
-  created() {
-    this.init()
-  }
+  created() { this.loadEmployees() }
 
-  initProp(val) {
-    this.input = val
-    this.initFun()
-  }
-
-  initFun() {
-    this.page = 1
-    this.init()
-  }
-
-  get userName() {
-    return UserModule.username
-  }
-
-  private async init(isSearch?: boolean) {
-    this.isSearch = isSearch
-    const params = {
+  private async loadEmployees() {
+    const response = await getEmployeeList({
       page: this.page,
       pageSize: this.pageSize,
-      name: this.input ? this.input : undefined,
-    }
-    await getEmployeeList(params)
-      .then((res: any) => {
-        if (String(res.data.code) === '1') {
-          this.tableData = res.data && res.data.data && res.data.data.records
-          this.counts = res.data.data.total
-        }
-        // if (!res.data.data.records.length && type === 'search') {
-        //   this.$message.error('未搜索到相关员工，请核对员工姓名是否正确')
-        // }
-      })
-      .catch((err) => {
-        this.$message.error('请求出错了：' + err.message)
-      })
-  }
-
-  // 添加
-  private addEmployeeHandle(st: string, username: string) {
-    if (st === 'add') {
-      this.$router.push({ path: '/employee/add' })
-    } else {
-      if (username === 'admin') {
-        return
-      }
-      this.$router.push({ path: '/employee/add', query: { id: st } })
-    }
-  }
-
-  //状态修改
-  private statusHandle(row: any) {
-    if (row.username === 'admin') {
-      return
-    }
-    this.id = row.id
-    this.status = row.status
-    this.$confirm('确认调整该账号的状态?', '提示', {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning',
-    }).then(() => {
-      enableOrDisableEmployee({ id: this.id, status: !this.status ? 1 : 0 })
-        .then((res) => {
-          if (String(res.status) === '200') {
-            this.$message.success('账号状态更改成功！')
-            this.init()
-          }
-        })
-        .catch((err) => {
-          this.$message.error('请求出错了：' + err.message)
-        })
+      name: this.keyword || undefined,
     })
+    if (Number(response.data.code) === 1) {
+      this.employees = response.data.data.records || []
+      this.total = response.data.data.total || 0
+    }
   }
 
-  private handleSizeChange(val: any) {
-    this.pageSize = val
-    this.init()
-  }
+  private search() { this.page = 1; this.loadEmployees() }
+  private changePage(page: number) { this.page = page; this.loadEmployees() }
+  private edit(employee: any) { this.$router.push({ path: '/employee/add', query: { id: employee.id } }) }
 
-  private handleCurrentChange(val: any) {
-    this.page = val
-    this.init()
+  private async toggleStatus(employee: any) {
+    const nextStatus = employee.status === 1 ? 0 : 1
+    await this.$confirm(
+      nextStatus === 1 ? `确认重新启用 ${employee.name} 的账号？` : `确认停用 ${employee.name} 的账号？`,
+      '调整账号状态',
+      { type: 'warning' }
+    )
+    const response = await enableOrDisableEmployee(employee.id, nextStatus)
+    if (Number(response.data.code) === 1) {
+      this.$message.success(nextStatus === 1 ? '账号已启用' : '账号已停用')
+      this.loadEmployees()
+    }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-.disabled-text {
-  color: #bac0cd !important;
-}
+.page-shell { padding: 24px; }
+.content-card { padding: 24px; background: $color-card-bg; border: 1px solid $color-border-light; border-radius: $radius-lg; box-shadow: $shadow-sm; }
+.table-toolbar { display: flex; gap: 10px; margin-bottom: 20px; .el-input { width: 260px; } .add-button { margin-left: auto; } }
+.status-pill { display: inline-block; padding: 4px 10px; color: $color-success; background: rgba(63, 122, 91, .1); border-radius: 999px; &.muted { color: $color-text-muted; background: #eeeae1; } }
+.el-pagination { margin-top: 22px; text-align: right; }
 </style>

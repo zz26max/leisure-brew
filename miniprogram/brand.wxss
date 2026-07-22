@@ -1,0 +1,188 @@
+/*
+ * 闲里茶咖 · 小程序品牌层
+ *
+ * 当前仓库只保留了 uni-app 编译产物，因此把品牌覆盖集中在这里。
+ * 日后找回源项目时，请把这些规则迁回 App.vue 与各页面样式中。
+ */
+
+page {
+  background: #f6f1e7;
+  color: #252923;
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+button::after {
+  border: 0;
+}
+
+.brand-seal {
+  display: flex;
+  width: 86rpx;
+  height: 86rpx;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20rpx 8rpx 20rpx 8rpx;
+  background: #23483f;
+  color: #fffcf7;
+  font-family: STSong, SimSun, serif;
+  font-size: 44rpx;
+  line-height: 1;
+  box-shadow: inset 0 0 0 2rpx rgba(255, 252, 247, 0.28);
+}
+
+.restaurant_info_box {
+  background: #f6f1e7 !important;
+}
+
+.restaurant_info,
+.box,
+.cart_pop,
+.dish_detail_pop,
+.more_norm_pop,
+.popup-content {
+  background: #fffcf7 !important;
+  border: 1rpx solid #ded8cb;
+  box-shadow: 0 10rpx 30rpx rgba(37, 41, 35, 0.07) !important;
+}
+
+.restaurant_info {
+  border-radius: 24rpx 8rpx 24rpx 8rpx !important;
+}
+
+.right_title text,
+.word_style,
+.success_title,
+.orderPay .money {
+  color: #252923 !important;
+  font-family: STSong, SimSun, serif !important;
+  font-weight: 600 !important;
+}
+
+.businessStatus {
+  width: auto !important;
+  padding: 0 14rpx;
+  border-radius: 18rpx !important;
+  background: #3f7a5b !important;
+  letter-spacing: 2rpx;
+}
+
+.businessStatus.close {
+  background: #6e746d !important;
+}
+
+.right_details .icon_text,
+.info_bottom,
+.dish_label,
+.time,
+.success_desc {
+  color: #6e746d !important;
+}
+
+.right_details {
+  gap: 8rpx;
+  margin-top: 6rpx;
+}
+
+.right_details .details_flex {
+  padding: 2rpx 10rpx;
+  border-radius: 14rpx;
+  background: #f3eee5;
+}
+
+.right_details .top_icon {
+  display: none !important;
+}
+
+.right_details .icon_text {
+  padding-right: 0 !important;
+  font-size: 22rpx !important;
+}
+
+.type_list {
+  background: #eee8dc !important;
+}
+
+.type_list .type_item.active {
+  background: #fffcf7 !important;
+  color: #23483f !important;
+  font-weight: 600 !important;
+}
+
+.vegetable_order_list,
+.no_dish,
+.card_order_list {
+  background: #fffcf7 !important;
+}
+
+.dish_img_url,
+.div_big_image {
+  border-radius: 18rpx 6rpx 18rpx 6rpx !important;
+}
+
+.dish_name,
+.top_title .tit,
+.order_line {
+  color: #252923 !important;
+}
+
+.dish_price,
+.price,
+.totalMoney .text,
+.word_date {
+  color: #b8653b !important;
+}
+
+.check_but,
+.dish_card_add,
+.add_btn,
+.new_btn.btn,
+.go_dish {
+  background: #b8653b !important;
+  border-color: #b8653b !important;
+  color: #fffcf7 !important;
+  box-shadow: none !important;
+}
+
+.new_btn,
+.go_dish.defaultBtn {
+  background: transparent !important;
+  border-color: #b8653b !important;
+  color: #b8653b !important;
+  box-shadow: none !important;
+}
+
+.footer_order_buttom {
+  background: #23483f !important;
+  box-shadow: 0 10rpx 24rpx rgba(35, 72, 63, 0.22) !important;
+}
+
+.order_form .order_but,
+.order_but_rit {
+  background: #b8653b !important;
+  color: #fffcf7 !important;
+}
+
+.order_dish_num,
+.tag,
+.scroll-row-item-act .line,
+.scroll-row-day .line {
+  background: #b8653b !important;
+}
+
+.my-center,
+.customer-box,
+.order_content,
+.success_content,
+.history_order {
+  background: #f6f1e7 !important;
+}
+
+.colseShop {
+  background: rgba(37, 41, 35, 0.68) !important;
+}
+
+.colseShop .shop {
+  color: #fffcf7 !important;
+  font-family: STSong, SimSun, serif;
+  letter-spacing: 4rpx;
+}
