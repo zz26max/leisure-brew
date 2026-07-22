@@ -1,14 +1,13 @@
-# Docker 环境配置
-# 实际值通过 docker-compose.yml 的 environment 注入，这里提供默认结构
+# Docker 环境配置。敏感值必须由 Compose 注入，不在仓库中提供回退值。
 
 sky:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    host: ${SKY_DATASOURCE_HOST:localhost}
+    host: ${SKY_DATASOURCE_HOST:leisure-brew-mysql}
     port: ${SKY_DATASOURCE_PORT:3306}
     database: ${SKY_DATASOURCE_DATABASE:meal_buddy}
-    username: ${SKY_DATASOURCE_USERNAME:root}
-    password: ${SKY_DATASOURCE_PASSWORD:root}
+    username: ${SKY_DATASOURCE_USERNAME:leisure_brew}
+    password: ${SKY_DATASOURCE_PASSWORD}
 
   alioss:
     endpoint: ${SKY_ALIOSS_ENDPOINT:}
@@ -17,14 +16,17 @@ sky:
     bucket-name: ${SKY_ALIOSS_BUCKET_NAME:}
 
   redis:
-    localhost: ${SKY_REDIS_LOCALHOST:localhost}
+    localhost: ${SKY_REDIS_LOCALHOST:leisure-brew-redis}
     port: ${SKY_REDIS_PORT:6379}
-    password: ${SKY_REDIS_PASSWORD:}
+    password: ${SKY_REDIS_PASSWORD}
     database: ${SKY_REDIS_DATABASE:0}
 
   jwt:
-    admin-secret-key: ${SKY_JWT_ADMIN_SECRET_KEY:your_admin_secret_key}
-    user-secret-key: ${SKY_JWT_USER_SECRET_KEY:your_user_secret_key}
+    admin-secret-key: ${SKY_JWT_ADMIN_SECRET_KEY}
+    user-secret-key: ${SKY_JWT_USER_SECRET_KEY}
+
+  payment:
+    simulation-enabled: ${SKY_PAYMENT_SIMULATION_ENABLED:false}
 
   wechat:
     appid: ${SKY_WECHAT_APPID:}
@@ -34,3 +36,12 @@ sky:
     apiV3Key: ${SKY_WECHAT_APIV3KEY:}
     notifyUrl: ${SKY_WECHAT_NOTIFYURL:}
     refundNotifyUrl: ${SKY_WECHAT_REFUNDNOTIFYURL:}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: never

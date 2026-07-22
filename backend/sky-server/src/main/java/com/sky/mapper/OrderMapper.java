@@ -4,7 +4,6 @@ import com.github.pagehelper.Page;
 import com.sky.dto.GoodsSalesDTO;
 import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.entity.Orders;
-import com.sky.vo.SalesTop10ReportVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -30,6 +29,9 @@ public interface OrderMapper {
     @Select("select * from orders where number = #{orderNumber}")
     Orders getByNumber(String orderNumber);
 
+    @Select("select * from orders where number = #{orderNumber} and user_id = #{userId}")
+    Orders getByNumberAndUserId(@Param("orderNumber") String orderNumber, @Param("userId") Long userId);
+
     /**
      * 修改订单信息
      * @param orders
@@ -43,11 +45,11 @@ public interface OrderMapper {
      * @param checkOutTime
      * @param id
      */
-    @Update("update orders set status = #{orderStatus},pay_status = #{orderPaidStatus}, checkout_time = #{checkoutTime} where id = #{id}")
-    void updateStatus(@Param("orderStatus") Integer orderStatus,
-                      @Param("orderPaidStatus") Integer orderPaidStatus,
-                      @Param("checkoutTime") LocalDateTime checkOutTime,
-                      @Param("id") Long id);
+    @Update("update orders set status = 2, pay_status = 1, pay_method = #{payMethod}, checkout_time = #{checkoutTime} " +
+            "where id = #{id} and status = 1 and pay_status = 0")
+    int markPaid(@Param("id") Long id,
+                 @Param("payMethod") Integer payMethod,
+                 @Param("checkoutTime") LocalDateTime checkoutTime);
 
     /**
      * 订单分页查询
@@ -59,15 +61,21 @@ public interface OrderMapper {
     @Select("select * from orders where id = #{id}")
     Orders getById(Long id);
 
+    @Select("select * from orders where id = #{id} and user_id = #{userId}")
+    Orders getByIdAndUserId(@Param("id") Long id, @Param("userId") Long userId);
+
     @Select("select count(*) from orders where status = #{status}")
     Integer countStatus(Integer status);
 
-    /**
-     * 查询超时订单
-     * @return
-     */
-    @Select("select * from orders where status = #{status} and order_time = #{orderTime}")
-    List<Orders> getOrders(Integer status, LocalDateTime orderTime);
+    @Update("update orders set status = 6, cancel_reason = '订单超时，自动取消', cancel_time = #{cancelTime} " +
+            "where status = 1 and pay_status = 0 and order_time <= #{cutoffTime}")
+    int cancelTimedOutOrders(@Param("cutoffTime") LocalDateTime cutoffTime,
+                             @Param("cancelTime") LocalDateTime cancelTime);
+
+    @Update("update orders set status = 5, delivery_time = #{deliveryTime} " +
+            "where status = 4 and order_time <= #{cutoffTime}")
+    int completeStaleDeliveries(@Param("cutoffTime") LocalDateTime cutoffTime,
+                                @Param("deliveryTime") LocalDateTime deliveryTime);
 
     /**
      * 动态查询每日营业额

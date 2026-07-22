@@ -153,36 +153,29 @@ frontend/
 
 ## 环境要求
 
-| 环境 | 版本要求 |
-|------|----------|
-| JDK | 8+ |
-| Maven | 3.6+ |
-| Node.js | 12+ (推荐 14+) |
-| MySQL | 5.7+ |
-| Redis | 5.0+ |
+后端本地开发需要 JDK 8 与 Maven 3.8+。MySQL、Redis 及完整项目的启动方式以仓库根目录的 `README.md` 为准。
 
 ## 快速启动
 
-### 1. 数据库准备
+### 1. 启动依赖
 
-```sql
--- 创建数据库
-CREATE DATABASE meal_buddy DEFAULT CHARACTER SET utf8mb4;
--- 导入 SQL 脚本 (sql/ 目录下)
+```bash
+docker compose up -d leisure-brew-mysql leisure-brew-redis
 ```
+
+Compose 会按固定顺序创建 `meal_buddy`、导入演示数据并初始化管理员。数据库、Redis 与 JWT 的口令或密钥来自根目录 `.env`，仓库不提供通用默认值。
 
 ### 2. 启动后端
 
 ```bash
-cd sky-take-out
+cd backend
 
 # 修改数据库和 Redis 配置
 # 编辑 sky-server/src/main/resources/application-dev.yml
 
 # 编译并启动
-mvn clean package -DskipTest
-cd sky-server
-mvn spring-boot:run
+mvn install -DskipTests
+mvn -pl sky-server spring-boot:run
 ```
 
 后端启动后访问：`http://localhost:8080`
@@ -192,8 +185,8 @@ mvn spring-boot:run
 ```bash
 cd ../frontend
 
-# 安装依赖
-npm install
+# 按锁文件安装依赖
+npm ci
 
 # 启动开发服务器
 npm run serve
@@ -201,10 +194,7 @@ npm run serve
 
 前端启动后访问：`http://localhost:8081`
 
-### 4. 默认登录
-
-- 账号：`admin`
-- 密码：`123456`
+本地演示管理员为 `admin` / `LocalBrew@2026!`，只用于回环地址上的开发环境，首次登录后请立即修改。
 
 ## API 文档
 

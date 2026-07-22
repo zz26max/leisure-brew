@@ -1,20 +1,21 @@
 package com.sky.service.impl;
 
 import com.sky.context.BaseContext;
+import com.sky.constant.MessageConstant;
 import com.sky.entity.AddressBook;
+import com.sky.exception.AddressBookBusinessException;
 import com.sky.mapper.AddressBookMapper;
 import com.sky.service.AddressBookService;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 @Service
-@Slf4j
+@RequiredArgsConstructor
 public class AddressBookServiceImpl implements AddressBookService {
-    @Autowired
-    private AddressBookMapper addressBookMapper;
+    private final AddressBookMapper addressBookMapper;
 
     /**
      * 条件查询
@@ -23,6 +24,7 @@ public class AddressBookServiceImpl implements AddressBookService {
      * @return
      */
     public List<AddressBook> list(AddressBook addressBook) {
+        addressBook.setUserId(currentUserId());
         return addressBookMapper.list(addressBook);
     }
 
@@ -32,7 +34,8 @@ public class AddressBookServiceImpl implements AddressBookService {
      * @param addressBook
      */
     public void save(AddressBook addressBook) {
-        addressBook.setUserId(BaseContext.getCurrentId());
+        addressBook.setId(null);
+        addressBook.setUserId(currentUserId());
         addressBook.setIsDefault(0);
         addressBookMapper.insert(addressBook);
     }
@@ -44,8 +47,7 @@ public class AddressBookServiceImpl implements AddressBookService {
      * @return
      */
     public AddressBook getById(Long id) {
-        AddressBook addressBook = addressBookMapper.getById(id);
-        return addressBook;
+        return requireOwnedAddress(id, currentUserId());
     }
 
     /**
@@ -54,7 +56,12 @@ public class AddressBookServiceImpl implements AddressBookService {
      * @param addressBook
      */
     public void update(AddressBook addressBook) {
-        addressBookMapper.update(addressBook);
+        Long userId = currentUserId();
+        requireOwnedAddress(addressBook.getId(), userId);
+        addressBook.setUserId(userId);
+        if (addressBookMapper.update(addressBook) == 0) {
+            throw new AddressBookBusinessException(MessageConstant.ADDRESS_BOOK_NOT_FOUND);
+        }
     }
 
     /**
@@ -64,14 +71,17 @@ public class AddressBookServiceImpl implements AddressBookService {
      */
     @Transactional
     public void setDefault(AddressBook addressBook) {
-        //1、将当前用户的所有地址修改为非默认地址 update address_book set is_default = ? where user_id = ?
+        Long userId = currentUserId();
+        requireOwnedAddress(addressBook.getId(), userId);
+
         addressBook.setIsDefault(0);
-        addressBook.setUserId(BaseContext.getCurrentId());
+        addressBook.setUserId(userId);
         addressBookMapper.updateIsDefaultByUserId(addressBook);
 
-        //2、将当前地址改为默认地址 update address_book set is_default = ? where id = ?
         addressBook.setIsDefault(1);
-        addressBookMapper.update(addressBook);
+        if (addressBookMapper.update(addressBook) == 0) {
+            throw new AddressBookBusinessException(MessageConstant.ADDRESS_BOOK_NOT_FOUND);
+        }
     }
 
     /**
@@ -80,7 +90,23 @@ public class AddressBookServiceImpl implements AddressBookService {
      * @param id
      */
     public void deleteById(Long id) {
-        addressBookMapper.deleteById(id);
+        if (addressBookMapper.deleteByIdAndUserId(id, currentUserId()) == 0) {
+            throw new AddressBookBusinessException(MessageConstant.ADDRESS_BOOK_NOT_FOUND);
+        }
     }
 
+    private AddressBook requireOwnedAddress(Long id, Long userId) {
+        if (id == null) {
+            throw new AddressBookBusinessException(MessageConstant.ADDRESS_BOOK_NOT_FOUND);
+        }
+        AddressBook addressBook = addressBookMapper.getByIdAndUserId(id, userId);
+        if (addressBook == null) {
+            throw new AddressBookBusinessException(MessageConstant.ADDRESS_BOOK_NOT_FOUND);
+        }
+        return addressBook;
+    }
+
+    private Long currentUserId() {
+        return BaseContext.getCurrentId();
+    }
 }

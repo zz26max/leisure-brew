@@ -4,6 +4,8 @@ import com.sky.entity.ShoppingCart;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
@@ -19,11 +21,14 @@ public interface ShoppingCartMapper {
      */
     List<ShoppingCart> list(ShoppingCart shoppingCart) ;
 
+    @Select("select * from shopping_cart where user_id = #{userId} order by create_time asc, id asc for update")
+    List<ShoppingCart> listByUserIdForUpdate(Long userId);
+
     /**
      * 根据id修改商品数量
      */
-    @Update("update shopping_cart set number = #{number} where id = #{id}")
-    void updateNumberById(ShoppingCart shoppingCart);
+    @Update("update shopping_cart set number = #{number} where id = #{id} and user_id = #{userId}")
+    int updateNumberById(ShoppingCart shoppingCart);
 
     /**
      * 添加购物车
@@ -40,8 +45,8 @@ public interface ShoppingCartMapper {
     @Delete("delete from shopping_cart where user_id = #{userId}")
     void cleanByUserId(Long userId);
 
-    @Delete("delete from shopping_cart where id = #{id}")
-    void deleteById(Long id);
+    @Delete("delete from shopping_cart where id = #{id} and user_id = #{userId}")
+    int deleteByIdAndUserId(@Param("id") Long id, @Param("userId") Long userId);
 
     /**
      * 批量插入购物车数据

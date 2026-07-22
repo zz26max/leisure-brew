@@ -117,7 +117,7 @@
     </select>
 
     <select id="getSalesTop10" resultType="com.sky.dto.GoodsSalesDTO">
-        select od.name ,count(od.number) as number
+        select od.name, sum(od.number) as number
         from orders o , order_detail od
         where od.order_id = o.id and o.status = 5
         <if test="beginTime != null">

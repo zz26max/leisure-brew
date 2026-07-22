@@ -1,5 +1,6 @@
 package com.sky.config;
 
+import com.sky.properties.JwtProperties;
 import com.sky.websocket.WebSocketServer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +15,8 @@ public class WebSocketConfiguration {
     }
 
     @Bean
-    public WebSocketServer webSocketServer() {
+    public WebSocketServer webSocketServer(JwtProperties jwtProperties) {
+        WebSocketServer.configure(jwtProperties.getAdminSecretKey());
         return new WebSocketServer();
     }
 }

@@ -21,6 +21,8 @@ import org.springframework.stereotype.Service;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import org.springframework.web.util.UriUtils;
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -62,7 +64,7 @@ public class ReportServiceImpl implements ReportService {
             LocalDateTime beginTime = LocalDateTime.of(date, LocalTime.MIN);
             LocalDateTime endTime = LocalDateTime.of(date, LocalTime.MAX);
             //查询订单表获得每天的营业额->营业额指已完成状态的订单
-            Map map = new HashMap();
+            Map<String, Object> map = new HashMap<>();
             map.put("beginTime", beginTime);
             map.put("endTime", endTime);
             map.put("status", Orders.COMPLETED);
@@ -96,7 +98,7 @@ public class ReportServiceImpl implements ReportService {
         for (LocalDate date : dateList) {
             LocalDateTime beginTime = LocalDateTime.of(date, LocalTime.MIN);
             LocalDateTime endTime = LocalDateTime.of(date, LocalTime.MAX);
-            Map map = new HashMap();
+            Map<String, Object> map = new HashMap<>();
             map.put("endTime", endTime);
             Integer totalUser = userMapper.countByMap(map);
             totalUserList.add(totalUser);
@@ -139,11 +141,11 @@ public class ReportServiceImpl implements ReportService {
         }
 
         //计算订单总数、订单完成率
-        Integer totalOrdersCount = orderCountList.stream().reduce(Integer::sum).get(); //订单总数
-        Integer validOrderCount = validOrderCountList.stream().reduce(Integer::sum).get(); //有效订单数
+        Integer totalOrdersCount = orderCountList.stream().reduce(Integer::sum).orElse(0);
+        Integer validOrderCount = validOrderCountList.stream().reduce(Integer::sum).orElse(0);
         Double orderCompletionRate = 0.0;
         if (totalOrdersCount != 0){
-            orderCompletionRate = Double.valueOf(validOrderCount/totalOrdersCount);
+            orderCompletionRate = validOrderCount.doubleValue() / totalOrdersCount;
         }
         return OrderReportVO.builder()
                 .dateList(StringUtils.join(dateList, ",")) //日期
@@ -163,7 +165,7 @@ public class ReportServiceImpl implements ReportService {
      */
     public SalesTop10ReportVO getSalesTop10Report(LocalDate begin, LocalDate end) {
         LocalDateTime beginTime = LocalDateTime.of(begin, LocalTime.MIN);
-        LocalDateTime endTime = LocalDateTime.of(begin, LocalTime.MAX);
+        LocalDateTime endTime = LocalDateTime.of(end, LocalTime.MAX);
 
         List<GoodsSalesDTO> salesTop10List = orderMapper.getSalesTop10(beginTime, endTime);
 
@@ -183,7 +185,7 @@ public class ReportServiceImpl implements ReportService {
     public void exportBusinessData(HttpServletResponse response) {
         // 统计周期：最近30天（不含当天）
         LocalDate endDate = LocalDate.now().minusDays(1);
-        LocalDate beginDate = endDate.minusDays(30);
+        LocalDate beginDate = endDate.minusDays(29);
 
         // 先查询30天汇总数据，填充报表头部统计区
         LocalDateTime beginTime = LocalDateTime.of(beginDate, LocalTime.MIN);
@@ -192,7 +194,9 @@ public class ReportServiceImpl implements ReportService {
 
         // 设置响应头，让浏览器按Excel附件下载
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        response.setHeader("Content-Disposition", "attachment;filename=运营报表.xlsx");
+        String fileName = UriUtils.encode("闲里茶咖运营报表.xlsx", StandardCharsets.UTF_8)
+                .replace("+", "%20");
+        response.setHeader("Content-Disposition", "attachment; filename*=UTF-8''" + fileName);
 
         ClassPathResource resource = new ClassPathResource("template/运营数据报表模板.xlsx");
         try (InputStream inputStream = resource.getInputStream();
@@ -240,25 +244,20 @@ public class ReportServiceImpl implements ReportService {
         }
     }
 
-    //计算日期方法
     private List<LocalDate> dateList(LocalDate begin, LocalDate end){
-        //创建集合存放begin到end之间全部日期
+        if (begin == null || end == null || begin.isAfter(end)) {
+            throw new IllegalArgumentException("统计日期范围无效");
+        }
         List<LocalDate> dateList = new ArrayList<>();
         dateList.add(begin);
         while (!begin.equals(end)) {
-            //如果begin != end，往后加一天
             begin = begin.plusDays(1);
             dateList.add(begin);
-        }//循环退出，dateList里存放了全部日期
+        }
         return dateList;
     }
 
-    //统计订单数量方法
     private Integer getOrdersCount(LocalDateTime beginTime, LocalDateTime endTime,Integer status){
-        Map map = new HashMap();
-        map.put("beginTime", beginTime);
-        map.put("endTime", endTime);
-        map.put("status", status);
         return orderMapper.getOrdersCount(beginTime,endTime,status);
     }
 }

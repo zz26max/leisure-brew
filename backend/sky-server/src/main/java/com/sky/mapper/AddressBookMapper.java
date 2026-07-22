@@ -2,6 +2,7 @@ package com.sky.mapper;
 
 import com.sky.entity.AddressBook;
 import org.apache.ibatis.annotations.*;
+
 import java.util.List;
 
 @Mapper
@@ -25,19 +26,14 @@ public interface AddressBookMapper {
             "                #{districtCode}, #{districtName}, #{detail}, #{label}, #{isDefault})")
     void insert(AddressBook addressBook);
 
-    /**
-     * 根据id查询
-     * @param id
-     * @return
-     */
-    @Select("select * from address_book where id = #{id}")
-    AddressBook getById(Long id);
+    @Select("select * from address_book where id = #{id} and user_id = #{userId}")
+    AddressBook getByIdAndUserId(@Param("id") Long id, @Param("userId") Long userId);
 
     /**
      * 根据id修改
      * @param addressBook
      */
-    void update(AddressBook addressBook);
+    int update(AddressBook addressBook);
 
     /**
      * 根据 用户id修改 是否默认地址
@@ -50,7 +46,7 @@ public interface AddressBookMapper {
      * 根据id删除地址
      * @param id
      */
-    @Delete("delete from address_book where id = #{id}")
-    void deleteById(Long id);
+    @Delete("delete from address_book where id = #{id} and user_id = #{userId}")
+    int deleteByIdAndUserId(@Param("id") Long id, @Param("userId") Long userId);
 
 }

@@ -2,12 +2,17 @@
 .idea
 *.iml
 *.class
-*Test.java
-**/test/
+
+# 早期实验代码依赖本机服务，不纳入持续测试；正式单元测试仍可跟踪。
+sky-server/src/main/java/com/sky/talk/TaskTest.java
+sky-server/src/test/java/sky/test/OrderDataGenerator.java
+sky-server/src/test/java/sky/test/SpringDataRedisTest.java
+sky-server/src/test/java/sky/test/TestHttpClient.java
 
 # 敏感配置文件（本地保留，不提交）
 application-dev.yml
 *.env
+!*.env.example
 *.pem
 *.key
 

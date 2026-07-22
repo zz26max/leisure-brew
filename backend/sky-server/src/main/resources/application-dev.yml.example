@@ -3,36 +3,40 @@ sky:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     host: localhost
-    port: 3306
-    database: sky_take_out
-    username: your_mysql_username
-    password: your_mysql_password
+    port: 3307
+    database: meal_buddy
+    username: leisure_brew
+    password: ${MYSQL_PASSWORD}
 
   # 阿里云 OSS 配置
   alioss:
-    endpoint: oss-cn-hangzhou.aliyuncs.com
-    access-key-id: your_aliyun_access_key_id
-    access-key-secret: your_aliyun_access_key_secret
-    bucket-name: your_bucket_name
+    endpoint: ${SKY_ALIOSS_ENDPOINT:}
+    access-key-id: ${SKY_ALIOSS_ACCESS_KEY_ID:}
+    access-key-secret: ${SKY_ALIOSS_ACCESS_KEY_SECRET:}
+    bucket-name: ${SKY_ALIOSS_BUCKET_NAME:}
 
   # Redis 配置
   redis:
     localhost: localhost
     port: 6379
-    password: your_redis_password
-    database: 1
+    password: ${REDIS_PASSWORD}
+    database: 0
 
   # JWT 密钥配置
   jwt:
-    admin-secret-key: your_admin_secret_key
-    user-secret-key: your_user_secret_key
+    admin-secret-key: ${JWT_ADMIN_SECRET_KEY}
+    user-secret-key: ${JWT_USER_SECRET_KEY}
+
+  # 本地模拟支付；接入真实支付前必须关闭。
+  payment:
+    simulation-enabled: ${SKY_PAYMENT_SIMULATION_ENABLED:false}
 
   # 微信小程序 & 微信支付配置
   wechat:
-    appid: your_wechat_appid
-    secret: your_wechat_secret
-    mchid: your_wechat_mchid
-    mchSerialNo: your_wechat_mch_serial_no
-    apiV3Key: your_wechat_api_v3_key
-    notifyUrl: https://your-domain.com/notify/paySuccess
-    refundNotifyUrl: https://your-domain.com/notify/refundSuccess
+    appid: ${SKY_WECHAT_APPID:}
+    secret: ${SKY_WECHAT_SECRET:}
+    mchid: ${SKY_WECHAT_MCHID:}
+    mchSerialNo: ${SKY_WECHAT_MCHSERIALNO:}
+    apiV3Key: ${SKY_WECHAT_APIV3KEY:}
+    notifyUrl: ${SKY_WECHAT_NOTIFYURL:}
+    refundNotifyUrl: ${SKY_WECHAT_REFUNDNOTIFYURL:}
