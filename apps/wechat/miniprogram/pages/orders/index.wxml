@@ -1,0 +1,52 @@
+<view class="orders-page">
+  <view class="orders-heading">
+    <text class="eyebrow">MY TEA MOMENTS</text>
+    <text class="page-title">我的订单</text>
+    <text>每一杯，都有它到来的时刻。</text>
+  </view>
+  <scroll-view class="status-strip" scroll-x enhanced show-scrollbar="{{false}}">
+    <button class="{{activeStatus === 0 ? 'active' : ''}}" data-status="0" bindtap="selectStatus">
+      全部
+    </button>
+    <button class="{{activeStatus === 2 ? 'active' : ''}}" data-status="2" bindtap="selectStatus">
+      进行中
+    </button>
+    <button class="{{activeStatus === 5 ? 'active' : ''}}" data-status="5" bindtap="selectStatus">
+      已完成
+    </button>
+    <button class="{{activeStatus === 6 ? 'active' : ''}}" data-status="6" bindtap="selectStatus">
+      已取消
+    </button>
+  </scroll-view>
+  <view wx:if="{{!loading && !orders.length}}" class="empty">
+    <view class="empty__cup" />
+    <text>还没有订单</text>
+    <text class="muted">第一杯喜欢的茶，在茶单里等你。</text>
+  </view>
+  <view class="order-list">
+    <button wx:for="{{orders}}" wx:key="id" class="order-card card" data-id="{{item.id}}" bindtap="open">
+      <view class="order-card__head">
+        <view>
+          <text>{{item.statusLabel}}</text>
+          <text>{{item.orderTime}}</text>
+        </view>
+        <text>›</text>
+      </view>
+      <view class="order-card__body">
+        <view>
+          <text># {{item.number}}</text>
+          <text>{{item.orderDishes || '打开查看饮品明细'}}</text>
+        </view>
+        <text class="price">¥{{item.amount}}</text>
+      </view>
+      <view class="order-card__foot">
+        <text>{{item.consignee}}</text>
+        <button wx:if="{{item.status === 5 || item.status === 6}}" data-id="{{item.id}}" catchtap="repeat">
+          再来一单
+        </button>
+      </view>
+    </button>
+  </view>
+  <view wx:if="{{loading}}" class="loading-tip">正在翻找订单…</view>
+  <view wx:if="{{!hasMore && orders.length}}" class="loading-tip">已经到底啦</view>
+</view>

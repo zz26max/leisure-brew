@@ -1,0 +1,40 @@
+<view class="page addresses-page">
+  <view class="addresses-heading">
+    <text class="eyebrow">PLACES FOR TEA</text>
+    <text class="page-title">收货地址</text>
+    <text>把常去的地方，好好记下来。</text>
+  </view>
+  <view wx:if="{{!loading && !addresses.length}}" class="empty">
+    <view class="empty__cup" />
+    <text>还没有收货地址</text>
+    <text class="muted">添加一个常用地点，点单会更快。</text>
+  </view>
+  <view class="address-list">
+    <button
+      wx:for="{{addresses}}"
+      wx:key="id"
+      class="address-card card"
+      data-id="{{item.id}}"
+      bindtap="choose"
+    >
+      <view class="address-card__top">
+        <view>
+          <text>{{item.consignee}}</text>
+          <text>{{item.sex === '1' ? '先生' : '女士'}}</text>
+          <text>{{item.phone}}</text>
+        </view>
+        <text wx:if="{{item.isDefault}}">默认</text>
+      </view>
+      <text class="address-card__detail">
+        {{item.provinceName}}{{item.cityName}}{{item.districtName}}{{item.detail}}
+      </text>
+      <view class="address-card__actions">
+        <button wx:if="{{!item.isDefault}}" data-id="{{item.id}}" catchtap="setDefault">设为默认</button>
+        <view />
+        <button data-id="{{item.id}}" catchtap="edit">编辑</button>
+        <button data-id="{{item.id}}" catchtap="remove">删除</button>
+      </view>
+    </button>
+  </view>
+  <button class="primary-button add-address" bindtap="add">＋ 添加新地址</button>
+</view>

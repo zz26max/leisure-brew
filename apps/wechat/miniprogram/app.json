@@ -1,0 +1,34 @@
+{
+  "pages": [
+    "pages/menu/index",
+    "pages/cart/index",
+    "pages/checkout/index",
+    "pages/orders/index",
+    "pages/order-detail/index",
+    "pages/profile/index",
+    "pages/addresses/index",
+    "pages/address-edit/index"
+  ],
+  "window": {
+    "navigationBarTitleText": "闲里茶咖",
+    "navigationBarBackgroundColor": "#FCFAF4",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#FCFAF4",
+    "backgroundTextStyle": "dark"
+  },
+  "tabBar": {
+    "color": "#8A918C",
+    "selectedColor": "#286454",
+    "backgroundColor": "#FFFEFA",
+    "borderStyle": "white",
+    "list": [
+      { "pagePath": "pages/menu/index", "text": "来一杯" },
+      { "pagePath": "pages/cart/index", "text": "购物袋" },
+      { "pagePath": "pages/orders/index", "text": "订单" },
+      { "pagePath": "pages/profile/index", "text": "我的" }
+    ]
+  },
+  "sitemapLocation": "sitemap.json",
+  "style": "v2",
+  "lazyCodeLoading": "requiredComponents"
+}

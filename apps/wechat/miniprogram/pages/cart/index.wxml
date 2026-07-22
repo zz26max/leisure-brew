@@ -1,0 +1,55 @@
+<view class="page cart-page">
+  <view class="cart-heading">
+    <view>
+      <text class="eyebrow">MY TEA BAG</text>
+      <text class="page-title">购物袋</text>
+    </view>
+    <button wx:if="{{lines.length}}" bindtap="clear">清空</button>
+  </view>
+  <view wx:if="{{!loading && !lines.length}}" class="empty">
+    <view class="empty__cup" />
+    <text>购物袋还是空的</text>
+    <text class="muted">去挑一杯今天想喝的吧。</text>
+    <button class="go-menu" bindtap="goMenu">看看茶单</button>
+  </view>
+  <view wx:else class="cart-lines">
+    <view wx:for="{{lines}}" wx:key="id" class="cart-line card">
+      <image src="{{item.image}}" mode="aspectFill" />
+      <view class="cart-line__body">
+        <text>{{item.name}}</text>
+        <text>{{item.dishFlavor || '默认口味'}}</text>
+        <text class="price">¥{{item.amount}}</text>
+      </view>
+      <view class="stepper">
+        <button data-index="{{index}}" bindtap="subtract">−</button>
+        <text>{{item.number}}</text>
+        <button data-index="{{index}}" bindtap="add">＋</button>
+      </view>
+    </view>
+  </view>
+  <view wx:if="{{lines.length}}" class="bill card">
+    <view>
+      <text>饮品小计</text>
+      <text>¥{{subtotal}}</text>
+    </view>
+    <view>
+      <text>包装费</text>
+      <text>¥{{packaging}}</text>
+    </view>
+    <view>
+      <text>配送费</text>
+      <text>¥{{delivery}}</text>
+    </view>
+    <view class="bill__total">
+      <text>合计</text>
+      <text class="price">¥{{total}}</text>
+    </view>
+  </view>
+  <view wx:if="{{lines.length}}" class="checkout-bar">
+    <view>
+      <text>共 {{count}} 件</text>
+      <text class="price">¥{{total}}</text>
+    </view>
+    <button class="primary-button" bindtap="checkout">去结算</button>
+  </view>
+</view>

@@ -1,0 +1,111 @@
+<view class="menu-page">
+  <view class="menu-hero">
+    <view class="menu-hero__brand">
+      <view class="seal">闲</view>
+      <view>
+        <text>闲里茶咖</text>
+        <text>LEISURE BREW</text>
+      </view>
+    </view>
+    <text class="menu-hero__season">七月茶单 · 清爽入夏</text>
+    <text class="menu-hero__title">今天，想喝点什么？</text>
+    <text class="menu-hero__copy">花香轻一点，果味鲜一点，忙里也能偷个闲。</text>
+    <view class="menu-hero__flower">
+      <view class="petal p1" />
+      <view class="petal p2" />
+      <view class="petal p3" />
+      <view class="petal p4" />
+      <view class="petal p5" />
+      <view class="core" />
+    </view>
+  </view>
+  <view wx:if="{{!shopOpen}}" class="closed-banner">
+    <text>今日暂时打烊</text>
+    <text>可以先看看茶单，营业后再来一杯。</text>
+  </view>
+  <scroll-view class="category-strip" scroll-x enhanced show-scrollbar="{{false}}">
+    <button
+      wx:for="{{categories}}"
+      wx:key="id"
+      class="category-pill {{activeCategoryId === item.id ? 'active' : ''}}"
+      data-id="{{item.id}}"
+      bindtap="selectCategory"
+    >
+      {{item.name}}
+    </button>
+  </scroll-view>
+  <view class="menu-list">
+    <view wx:if="{{loading}}" class="loading-list">
+      <view wx:for="{{skeletons}}" wx:key="*this" class="skeleton" />
+    </view>
+    <button
+      wx:else
+      wx:for="{{items}}"
+      wx:key="id"
+      class="product-card"
+      data-id="{{item.id}}"
+      bindtap="openItem"
+    >
+      <view class="product-card__image">
+        <image wx:if="{{item.image}}" src="{{item.image}}" mode="aspectFill" />
+        <text wx:else>茶</text>
+        <view wx:if="{{item.status === 0}}">暂时售罄</view>
+      </view>
+      <view class="product-card__body">
+        <view>
+          <text class="product-card__name">{{item.name}}</text>
+          <text class="product-card__description">{{item.description || '认真调好的一杯日常茶。'}}</text>
+        </view>
+        <view class="product-card__foot">
+          <text class="price">¥{{item.price}}</text>
+          <button
+            class="add-button"
+            data-id="{{item.id}}"
+            catchtap="quickAdd"
+            disabled="{{!shopOpen || item.status === 0}}"
+          >
+            ＋
+          </button>
+        </view>
+      </view>
+    </button>
+  </view>
+  <button wx:if="{{cartCount > 0}}" class="floating-cart" bindtap="goCart">
+    <view>
+      <text>{{cartCount}}</text>
+      <text>购物袋</text>
+    </view>
+    <text class="price-text">¥{{cartSubtotal}}</text>
+    <text>去看看 →</text>
+  </button>
+  <view wx:if="{{sheetVisible}}" class="sheet-mask" bindtap="closeSheet">
+    <view class="product-sheet" catchtap="noop">
+      <view class="sheet-handle" />
+      <view class="product-sheet__heading">
+        <image wx:if="{{selectedItem.image}}" src="{{selectedItem.image}}" mode="aspectFill" />
+        <view>
+          <text>{{selectedItem.name}}</text>
+          <text>{{selectedItem.description}}</text>
+          <text class="price">¥{{selectedItem.price}}</text>
+        </view>
+      </view>
+      <view wx:for="{{flavorChoices}}" wx:key="name" class="flavor-group">
+        <text>{{item.name}}</text>
+        <view>
+          <button
+            wx:for="{{item.options}}"
+            wx:for-item="option"
+            wx:key="*this"
+            class="{{item.selected === option ? 'selected' : ''}}"
+            data-index="{{index}}"
+            data-value="{{option}}"
+            bindtap="chooseFlavor"
+          >
+            {{option}}
+          </button>
+        </view>
+      </view>
+      <button class="primary-button" bindtap="addSelected" disabled="{{!shopOpen}}">放进购物袋</button>
+    </view>
+  </view>
+</view>

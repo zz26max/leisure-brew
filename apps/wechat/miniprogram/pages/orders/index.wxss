@@ -1,0 +1,111 @@
+.orders-page {
+  min-height: 100vh;
+  padding-bottom: calc(40rpx + env(safe-area-inset-bottom));
+}
+.orders-heading {
+  display: flex;
+  padding: 40rpx 28rpx 26rpx;
+  flex-direction: column;
+}
+.orders-heading > text:last-child {
+  margin-top: 12rpx;
+  color: var(--muted);
+  font-size: 22rpx;
+}
+.status-strip {
+  width: auto;
+  padding: 0 28rpx 26rpx;
+  white-space: nowrap;
+}
+.status-strip button {
+  display: inline-flex;
+  margin-right: 28rpx;
+  padding: 12rpx 4rpx;
+  color: var(--muted);
+  border-bottom: 4rpx solid transparent;
+}
+.status-strip button.active {
+  color: var(--tea-700);
+  border-color: var(--tea-700);
+  font-weight: 700;
+}
+.order-list {
+  display: grid;
+  gap: 18rpx;
+  padding: 0 28rpx;
+}
+.order-card {
+  width: 100%;
+  padding: 26rpx;
+  color: var(--ink);
+  text-align: left;
+}
+.order-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 20rpx;
+  border-bottom: 1rpx solid var(--line);
+}
+.order-card__head > view {
+  display: flex;
+  flex-direction: column;
+}
+.order-card__head > view text:first-child {
+  color: var(--tea-700);
+  font-weight: 700;
+}
+.order-card__head > view text:last-child {
+  margin-top: 6rpx;
+  color: var(--muted);
+  font-size: 20rpx;
+}
+.order-card__body {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24rpx 0;
+}
+.order-card__body > view {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+.order-card__body > view text:first-child {
+  font-size: 22rpx;
+  font-weight: 600;
+}
+.order-card__body > view text:last-child {
+  max-width: 470rpx;
+  margin-top: 10rpx;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 22rpx;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.order-card__body strong {
+  font-size: 30rpx;
+}
+.order-card__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.order-card__foot > text {
+  color: var(--muted);
+  font-size: 22rpx;
+}
+.order-card__foot button {
+  padding: 13rpx 24rpx;
+  color: var(--tea-700);
+  background: var(--tea-100);
+  border-radius: 28rpx;
+  font-size: 22rpx;
+}
+.loading-tip {
+  padding: 28rpx;
+  color: var(--muted);
+  font-size: 21rpx;
+  text-align: center;
+}

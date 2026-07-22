@@ -1,0 +1,133 @@
+.checkout-heading {
+  display: flex;
+  margin-bottom: 34rpx;
+  flex-direction: column;
+}
+.address-card {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  width: 100%;
+  align-items: center;
+  padding: 30rpx;
+  color: var(--ink);
+  text-align: left;
+}
+.address-card > view > view:first-child {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  font-weight: 700;
+}
+.address-card > view > view:first-child text:last-child {
+  color: var(--muted);
+  font-size: 23rpx;
+  font-weight: 400;
+}
+.address-card > view > text {
+  display: block;
+  margin-top: 14rpx;
+  color: var(--muted);
+  font-size: 23rpx;
+  line-height: 1.5;
+}
+.address-empty {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+}
+.address-empty > text {
+  display: grid;
+  width: 56rpx;
+  height: 56rpx;
+  color: var(--tea-700);
+  background: var(--tea-100);
+  border-radius: 50%;
+  place-items: center;
+}
+.address-empty > view {
+  display: flex;
+  flex-direction: column;
+}
+.address-empty > view text:last-child {
+  margin-top: 7rpx;
+  color: var(--muted);
+  font-size: 21rpx;
+}
+.order-lines {
+  padding: 12rpx 26rpx;
+}
+.order-lines > view {
+  display: grid;
+  grid-template-columns: 104rpx 1fr 52rpx 100rpx;
+  align-items: center;
+  gap: 18rpx;
+  padding: 18rpx 0;
+  border-bottom: 1rpx solid var(--line);
+}
+.order-lines > view:last-child {
+  border: 0;
+}
+.order-lines image {
+  width: 104rpx;
+  height: 104rpx;
+  background: var(--rice-100);
+  border-radius: 18rpx;
+}
+.order-lines > view > view {
+  display: flex;
+  flex-direction: column;
+}
+.order-lines > view > view text:first-child {
+  font-weight: 600;
+}
+.order-lines > view > view text:last-child {
+  margin-top: 7rpx;
+  color: var(--muted);
+  font-size: 20rpx;
+}
+.order-lines strong {
+  text-align: right;
+}
+.remark-card {
+  margin-top: 24rpx;
+  padding: 28rpx;
+}
+.remark-card > text {
+  font-weight: 600;
+}
+.remark-card input {
+  height: 70rpx;
+  margin-top: 15rpx;
+  padding: 0 20rpx;
+  background: var(--rice-100);
+  border-radius: 16rpx;
+  font-size: 23rpx;
+}
+.bill {
+  display: grid;
+  gap: 18rpx;
+  margin-top: 24rpx;
+  padding: 28rpx;
+}
+.bill view {
+  display: flex;
+  justify-content: space-between;
+  color: var(--muted);
+  font-size: 23rpx;
+}
+.bill view:last-child {
+  padding-top: 20rpx;
+  color: var(--ink);
+  border-top: 1rpx solid var(--line);
+  font-size: 30rpx;
+}
+.submit-button {
+  margin-top: 30rpx;
+}
+.payment-note {
+  display: block;
+  margin: 18rpx 0 30rpx;
+  color: var(--muted);
+  font-size: 20rpx;
+  text-align: center;
+}

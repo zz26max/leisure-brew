@@ -1,0 +1,69 @@
+<view class="page checkout-page">
+  <view class="checkout-heading">
+    <text class="eyebrow">CHECK YOUR CUP</text>
+    <text class="page-title">确认订单</text>
+  </view>
+  <button class="address-card card" bindtap="chooseAddress">
+    <view wx:if="{{address}}">
+      <view>
+        <text>{{address.consignee}}</text>
+        <text>{{address.phone}}</text>
+      </view>
+      <text>{{address.provinceName}}{{address.cityName}}{{address.districtName}}{{address.detail}}</text>
+    </view>
+    <view wx:else class="address-empty">
+      <text>＋</text>
+      <view>
+        <text>添加收货地址</text>
+        <text>选好地址，我们才知道茶送去哪里。</text>
+      </view>
+    </view>
+    <text>›</text>
+  </button>
+  <view class="section-title">
+    <text>这一袋</text>
+    <text>共 {{count}} 件</text>
+  </view>
+  <view class="order-lines card">
+    <view wx:for="{{lines}}" wx:key="id">
+      <image src="{{item.image}}" mode="aspectFill" />
+      <view>
+        <text>{{item.name}}</text>
+        <text>{{item.dishFlavor || '默认口味'}}</text>
+      </view>
+      <text>×{{item.number}}</text>
+      <text class="price">¥{{item.amount}}</text>
+    </view>
+  </view>
+  <view class="remark-card card">
+    <text>给门店伙伴留言</text>
+    <input value="{{remark}}" maxlength="50" placeholder="少冰、到门口电话联系…" bindinput="setRemark" />
+  </view>
+  <view class="bill card">
+    <view>
+      <text>饮品小计</text>
+      <text>¥{{subtotal}}</text>
+    </view>
+    <view>
+      <text>包装费</text>
+      <text>¥{{packaging}}</text>
+    </view>
+    <view>
+      <text>配送费</text>
+      <text>¥6.00</text>
+    </view>
+    <view>
+      <text class="total-label">合计</text>
+      <text class="price">¥{{total}}</text>
+    </view>
+  </view>
+  <button
+    class="primary-button submit-button"
+    loading="{{submitting}}"
+    disabled="{{submitting || !lines.length}}"
+    bindtap="submit"
+  >
+    {{submitting ? '正在下单…' : '确认并支付 ¥' + total}}
+  </button>
+  <text class="payment-note">当前本地环境使用模拟支付，不会发生真实扣款。</text>
+</view>

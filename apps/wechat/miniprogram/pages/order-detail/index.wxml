@@ -1,0 +1,55 @@
+<view wx:if="{{order}}" class="page detail-page">
+  <view class="status-hero">
+    <view class="status-hero__flower">
+      <view />
+      <view />
+      <view />
+      <view />
+      <view />
+      <view class="flower-core" />
+    </view>
+    <text>{{statusLabel}}</text>
+    <text wx:if="{{created}}">下单成功，这杯茶已经出发啦。</text>
+    <text wx:else># {{order.number}}</text>
+  </view>
+  <view class="section-title">
+    <text>饮品明细</text>
+    <text>{{order.orderTime}}</text>
+  </view>
+  <view class="detail-lines card">
+    <view wx:for="{{order.orderDetailList}}" wx:key="id">
+      <image src="{{item.image}}" mode="aspectFill" />
+      <view>
+        <text>{{item.name}}</text>
+        <text>{{item.dishFlavor || '默认口味'}}</text>
+      </view>
+      <text>×{{item.number}}</text>
+      <text class="price">¥{{item.amount}}</text>
+    </view>
+    <view class="detail-total">
+      <text>订单合计</text>
+      <text class="price">¥{{order.amount}}</text>
+    </view>
+  </view>
+  <view class="info-card card">
+    <view>
+      <text>收货人</text>
+      <text>{{order.consignee}} · {{order.phone}}</text>
+    </view>
+    <view>
+      <text>送达地址</text>
+      <text>{{order.address}}</text>
+    </view>
+    <view>
+      <text>订单备注</text>
+      <text>{{order.remark || '无'}}</text>
+    </view>
+  </view>
+  <view class="detail-actions">
+    <button wx:if="{{order.status === 2 || order.status === 3 || order.status === 4}}" bindtap="remind">
+      提醒门店
+    </button>
+    <button wx:if="{{order.status === 1 || order.status === 2}}" bindtap="cancel">取消订单</button>
+    <button class="primary-button" bindtap="goHome">再逛逛茶单</button>
+  </view>
+</view>

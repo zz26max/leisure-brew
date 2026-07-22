@@ -1,0 +1,116 @@
+page {
+  --tea-900: #173f35;
+  --tea-700: #286454;
+  --tea-100: #ddece5;
+  --rice-50: #fcfaf4;
+  --rice-100: #f5f0e5;
+  --jasmine: #e8c96a;
+  --peach: #f1a38b;
+  --ink: #202823;
+  --muted: #6c756f;
+  --line: #e5e1d7;
+  min-height: 100%;
+  color: var(--ink);
+  background: var(--rice-50);
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+button {
+  margin: 0;
+  padding: 0;
+  font-size: inherit;
+  line-height: inherit;
+  background: none;
+  border: 0;
+  border-radius: 0;
+}
+button::after {
+  border: 0;
+}
+.page {
+  min-height: 100vh;
+  padding: 32rpx 28rpx calc(44rpx + env(safe-area-inset-bottom));
+}
+.eyebrow {
+  color: var(--tea-700);
+  font-size: 20rpx;
+  font-weight: 700;
+  letter-spacing: 5rpx;
+}
+.page-title {
+  margin: 10rpx 0 0;
+  font-family: STSong, SimSun, serif;
+  font-size: 52rpx;
+  font-weight: 600;
+  letter-spacing: 3rpx;
+}
+.muted {
+  color: var(--muted);
+}
+.card {
+  background: #fffefa;
+  border: 1rpx solid var(--line);
+  border-radius: 30rpx;
+  box-shadow: 0 14rpx 40rpx rgba(31, 66, 55, 0.05);
+}
+.primary-button {
+  display: flex;
+  height: 92rpx;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  background: var(--tea-700);
+  border-radius: 46rpx;
+  font-weight: 600;
+  letter-spacing: 2rpx;
+}
+.primary-button[disabled] {
+  color: rgba(255, 255, 255, 0.7);
+  background: #9aaba4;
+}
+.price {
+  font-family: Georgia, serif;
+  font-weight: 700;
+}
+.empty {
+  display: flex;
+  min-height: 420rpx;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  color: var(--muted);
+  text-align: center;
+}
+.empty__cup {
+  position: relative;
+  width: 96rpx;
+  height: 54rpx;
+  margin-bottom: 30rpx;
+  background: var(--tea-100);
+  border-radius: 8rpx 8rpx 50rpx 50rpx;
+}
+.empty__cup::after {
+  position: absolute;
+  top: 10rpx;
+  right: -28rpx;
+  width: 30rpx;
+  height: 28rpx;
+  border: 10rpx solid var(--tea-100);
+  border-left: 0;
+  border-radius: 0 28rpx 28rpx 0;
+  content: '';
+}
+.section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 38rpx 0 22rpx;
+}
+.section-title text:first-child {
+  font-family: STSong, SimSun, serif;
+  font-size: 34rpx;
+  font-weight: 600;
+}
+.section-title text:last-child {
+  color: var(--muted);
+  font-size: 22rpx;
+}

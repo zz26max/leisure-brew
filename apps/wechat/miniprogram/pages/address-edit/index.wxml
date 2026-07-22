@@ -1,0 +1,71 @@
+<view class="page address-edit">
+  <view class="address-edit__heading">
+    <text class="eyebrow">DELIVERY PLACE</text>
+    <text class="page-title">{{form.id ? '编辑地址' : '新地址'}}</text>
+  </view>
+  <view class="address-form card">
+    <label>
+      <text>收货人</text>
+      <input
+        data-field="consignee"
+        value="{{form.consignee}}"
+        placeholder="怎么称呼你"
+        bindinput="setField"
+      />
+    </label>
+    <view class="choice-row">
+      <text>称呼</text>
+      <view>
+        <button class="{{form.sex === '1' ? 'active' : ''}}" data-value="1" bindtap="setSex">先生</button>
+        <button class="{{form.sex === '0' ? 'active' : ''}}" data-value="0" bindtap="setSex">女士</button>
+      </view>
+    </view>
+    <label>
+      <text>手机号</text>
+      <input
+        type="number"
+        maxlength="11"
+        data-field="phone"
+        value="{{form.phone}}"
+        placeholder="用于配送联系"
+        bindinput="setField"
+      />
+    </label>
+    <picker mode="region" value="{{region}}" bindchange="setRegion">
+      <view class="picker-row">
+        <text>所在地区</text>
+        <text class="{{region.length ? '' : 'placeholder'}}">
+          {{region.length ? regionText : '请选择省 / 市 / 区'}}
+        </text>
+        <text>›</text>
+      </view>
+    </picker>
+    <label class="detail-field">
+      <text>详细地址</text>
+      <textarea
+        data-field="detail"
+        value="{{form.detail}}"
+        maxlength="100"
+        placeholder="街道、楼栋、门牌号"
+        bindinput="setField"
+      />
+    </label>
+    <view class="choice-row">
+      <text>标签</text>
+      <view>
+        <button
+          wx:for="{{labels}}"
+          wx:key="*this"
+          class="{{form.label === item ? 'active' : ''}}"
+          data-value="{{item}}"
+          bindtap="setLabel"
+        >
+          {{item}}
+        </button>
+      </view>
+    </view>
+  </view>
+  <button class="primary-button save-button" loading="{{saving}}" disabled="{{saving}}" bindtap="save">
+    保存地址
+  </button>
+</view>

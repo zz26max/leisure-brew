@@ -1,0 +1,118 @@
+.cart-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 34rpx;
+}
+.cart-heading > view {
+  display: flex;
+  flex-direction: column;
+}
+.cart-heading button {
+  color: var(--muted);
+  font-size: 24rpx;
+}
+.go-menu {
+  margin-top: 30rpx;
+  padding: 18rpx 34rpx;
+  color: var(--tea-700);
+  background: var(--tea-100);
+  border-radius: 36rpx;
+}
+.cart-lines {
+  display: grid;
+  gap: 16rpx;
+}
+.cart-line {
+  display: grid;
+  grid-template-columns: 142rpx 1fr auto;
+  align-items: center;
+  gap: 22rpx;
+  padding: 20rpx;
+}
+.cart-line image {
+  width: 142rpx;
+  height: 142rpx;
+  background: var(--rice-100);
+  border-radius: 22rpx;
+}
+.cart-line__body {
+  display: flex;
+  flex-direction: column;
+}
+.cart-line__body > text:first-child {
+  font-family: STSong, serif;
+  font-size: 29rpx;
+  font-weight: 600;
+}
+.cart-line__body > text:nth-child(2) {
+  margin: 8rpx 0 18rpx;
+  color: var(--muted);
+  font-size: 21rpx;
+}
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+.stepper button {
+  display: grid;
+  width: 48rpx;
+  height: 48rpx;
+  color: var(--tea-700);
+  background: var(--tea-100);
+  border-radius: 50%;
+  place-items: center;
+}
+.stepper text {
+  min-width: 24rpx;
+  text-align: center;
+}
+.bill {
+  display: grid;
+  gap: 20rpx;
+  margin-top: 24rpx;
+  padding: 30rpx;
+}
+.bill > view {
+  display: flex;
+  justify-content: space-between;
+  color: var(--muted);
+  font-size: 24rpx;
+}
+.bill__total {
+  padding-top: 22rpx;
+  color: var(--ink) !important;
+  border-top: 1rpx solid var(--line);
+}
+.bill__total text:last-child {
+  font-size: 34rpx;
+}
+.checkout-bar {
+  position: fixed;
+  z-index: 10;
+  right: 0;
+  bottom: calc(100rpx + env(safe-area-inset-bottom));
+  left: 0;
+  display: grid;
+  grid-template-columns: 1fr 260rpx;
+  align-items: center;
+  gap: 20rpx;
+  padding: 18rpx 28rpx;
+  background: rgba(255, 254, 250, 0.96);
+  border-top: 1rpx solid var(--line);
+}
+.checkout-bar > view {
+  display: flex;
+  flex-direction: column;
+}
+.checkout-bar > view text {
+  color: var(--muted);
+  font-size: 20rpx;
+}
+.checkout-bar strong {
+  font-size: 36rpx;
+}
+.checkout-bar .primary-button {
+  height: 82rpx;
+}

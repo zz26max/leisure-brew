@@ -1,0 +1,46 @@
+<view class="profile-page">
+  <view class="profile-hero">
+    <view class="profile-flower">
+      <view />
+      <view />
+      <view />
+      <view />
+      <view />
+      <view class="flower-core" />
+    </view>
+    <button class="avatar-button" open-type="chooseAvatar" bindchooseavatar="chooseAvatar">
+      <image wx:if="{{avatarUrl}}" src="{{avatarUrl}}" />
+      <text wx:else>闲</text>
+    </button>
+    <input type="nickname" value="{{nickname}}" bindblur="setNickname" />
+    <text>愿每一杯，都留一点从容。</text>
+  </view>
+  <view class="profile-actions">
+    <button class="card" bindtap="goOrders">
+      <view class="action-mark tea">单</view>
+      <view>
+        <text>我的订单</text>
+        <text>看看茶到哪里了</text>
+      </view>
+      <text>›</text>
+    </button>
+    <button class="card" bindtap="goAddresses">
+      <view class="action-mark peach">址</view>
+      <view>
+        <text>收货地址</text>
+        <text>管理常用送达地点</text>
+      </view>
+      <text>›</text>
+    </button>
+  </view>
+  <view class="profile-note">
+    <text>LEISURE NOTE · 07</text>
+    <text>生活偶尔很赶，\n喝茶可以慢一点。</text>
+    <view />
+    <text>闲里茶咖</text>
+  </view>
+  <view class="profile-footer">
+    <text>闲里茶咖 · LEISURE BREW</text>
+    <text>本地演示版本</text>
+  </view>
+</view>

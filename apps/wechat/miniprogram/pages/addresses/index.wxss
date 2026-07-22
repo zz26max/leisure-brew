@@ -1,0 +1,68 @@
+.addresses-heading {
+  display: flex;
+  margin-bottom: 34rpx;
+  flex-direction: column;
+}
+.addresses-heading > text:last-child {
+  margin-top: 12rpx;
+  color: var(--muted);
+  font-size: 22rpx;
+}
+.address-list {
+  display: grid;
+  gap: 18rpx;
+  padding-bottom: 120rpx;
+}
+.address-card {
+  width: 100%;
+  padding: 28rpx;
+  color: var(--ink);
+  text-align: left;
+}
+.address-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.address-card__top > view {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+}
+.address-card__top > view text:first-child {
+  font-size: 28rpx;
+  font-weight: 700;
+}
+.address-card__top > view text:not(:first-child) {
+  color: var(--muted);
+  font-size: 21rpx;
+}
+.address-card__top > text {
+  padding: 6rpx 14rpx;
+  color: var(--tea-700);
+  background: var(--tea-100);
+  border-radius: 20rpx;
+  font-size: 18rpx;
+}
+.address-card__detail {
+  display: block;
+  margin: 18rpx 0 24rpx;
+  line-height: 1.6;
+}
+.address-card__actions {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  gap: 24rpx;
+  padding-top: 20rpx;
+  border-top: 1rpx solid var(--line);
+}
+.address-card__actions button {
+  color: var(--muted);
+  font-size: 21rpx;
+}
+.add-address {
+  position: fixed;
+  right: 28rpx;
+  bottom: calc(30rpx + env(safe-area-inset-bottom));
+  left: 28rpx;
+}

@@ -1,0 +1,15 @@
+{
+  "description": "闲里茶咖微信小程序",
+  "miniprogramRoot": "miniprogram/",
+  "compileType": "miniprogram",
+  "setting": {
+    "useCompilerPlugins": ["typescript"],
+    "es6": true,
+    "minified": true,
+    "postcss": true,
+    "urlCheck": true,
+    "coverView": true
+  },
+  "appid": "touristappid",
+  "projectname": "leisure-brew-wechat"
+}
