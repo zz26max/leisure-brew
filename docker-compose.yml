@@ -1,92 +1,119 @@
 services:
-  # ==================== MySQL ====================
   leisure-brew-mysql:
-    image: mysql:8.0
-    container_name: leisure-brew-mysql
+    image: mysql:8.0.43
+    restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD in .env}
       MYSQL_DATABASE: meal_buddy
-      MYSQL_CHARSET: utf8mb4
+      MYSQL_USER: leisure_brew
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?Set MYSQL_PASSWORD in .env}
       TZ: Asia/Shanghai
     ports:
-      - "3307:3306"
+      - '127.0.0.1:${MYSQL_PORT:-3307}:3306'
     volumes:
       - mysql-data:/var/lib/mysql
-      - ./backend/sql:/docker-entrypoint-initdb.d
-    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+      - ./backend/sql/schema.sql:/docker-entrypoint-initdb.d/10-schema.sql:ro
+      - ./backend/sql/demo-data.sql:/docker-entrypoint-initdb.d/20-demo-data.sql:ro
+      - ./backend/sql/local-admin.sql:/docker-entrypoint-initdb.d/25-local-admin.sql:ro
+      - ./backend/sql/indexes.sql:/docker-entrypoint-initdb.d/30-indexes.sql:ro
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: ['CMD-SHELL', 'mysqladmin ping -h 127.0.0.1 -uroot -p"$$MYSQL_ROOT_PASSWORD" --silent']
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 10
+      start_period: 30s
     networks:
       - leisure-net
 
-  # ==================== Redis ====================
   leisure-brew-redis:
-    image: redis:7-alpine
-    container_name: leisure-brew-redis
+    image: redis:7.4-alpine
+    restart: unless-stopped
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?Set REDIS_PASSWORD in .env}
     ports:
-      - "6380:6379"
+      - '127.0.0.1:${REDIS_PORT:-6380}:6379'
     volumes:
       - redis-data:/data
+    command:
+      - /bin/sh
+      - -c
+      - exec redis-server --appendonly yes --requirepass "$$REDIS_PASSWORD"
+    healthcheck:
+      test: ['CMD-SHELL', 'redis-cli --no-auth-warning -a "$$REDIS_PASSWORD" ping | grep -q PONG']
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
     networks:
       - leisure-net
 
-  # ==================== 后端 ====================
   leisure-brew-backend:
-    build: ./backend
-    image: leisure-brew/backend:latest
-    container_name: leisure-brew-backend
-    ports:
-      - "8080:8080"
+    build:
+      context: ./backend
+    image: leisure-brew/backend:local
+    restart: unless-stopped
     depends_on:
       leisure-brew-mysql:
         condition: service_healthy
       leisure-brew-redis:
-        condition: service_started
+        condition: service_healthy
     environment:
-      # Spring 配置
       SPRING_PROFILES_ACTIVE: docker
-      # 数据源配置
+      JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
       SKY_DATASOURCE_HOST: leisure-brew-mysql
       SKY_DATASOURCE_PORT: 3306
       SKY_DATASOURCE_DATABASE: meal_buddy
-      SKY_DATASOURCE_USERNAME: root
-      SKY_DATASOURCE_PASSWORD: root
-      # Redis 配置
+      SKY_DATASOURCE_USERNAME: leisure_brew
+      SKY_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD:?Set MYSQL_PASSWORD in .env}
       SKY_REDIS_LOCALHOST: leisure-brew-redis
       SKY_REDIS_PORT: 6379
-      SKY_REDIS_PASSWORD: ""
+      SKY_REDIS_PASSWORD: ${REDIS_PASSWORD:?Set REDIS_PASSWORD in .env}
       SKY_REDIS_DATABASE: 0
-      # JWT 配置
-      SKY_JWT_ADMIN_SECRET_KEY: your_admin_secret_key
-      SKY_JWT_USER_SECRET_KEY: your_user_secret_key
-      # 阿里云 OSS（按需填写）
-      SKY_ALIOSS_ENDPOINT: ""
-      SKY_ALIOSS_ACCESS_KEY_ID: ""
-      SKY_ALIOSS_ACCESS_KEY_SECRET: ""
-      SKY_ALIOSS_BUCKET_NAME: ""
-      # 微信（按需填写，从微信公众平台获取）
-      SKY_WECHAT_APPID: ""
-      SKY_WECHAT_SECRET: ""
-      SKY_WECHAT_MCHID: ""
-      SKY_WECHAT_MCHSERIALNO: ""
-      SKY_WECHAT_APIV3KEY: ""
-      SKY_WECHAT_NOTIFYURL: ""
-      SKY_WECHAT_REFUNDNOTIFYURL: ""
+      SKY_JWT_ADMIN_SECRET_KEY: ${JWT_ADMIN_SECRET_KEY:?Set JWT_ADMIN_SECRET_KEY in .env}
+      SKY_JWT_USER_SECRET_KEY: ${JWT_USER_SECRET_KEY:?Set JWT_USER_SECRET_KEY in .env}
+      SKY_PAYMENT_SIMULATION_ENABLED: ${PAYMENT_SIMULATION_ENABLED:-false}
+      SKY_ALIOSS_ENDPOINT: ${SKY_ALIOSS_ENDPOINT:-}
+      SKY_ALIOSS_ACCESS_KEY_ID: ${SKY_ALIOSS_ACCESS_KEY_ID:-}
+      SKY_ALIOSS_ACCESS_KEY_SECRET: ${SKY_ALIOSS_ACCESS_KEY_SECRET:-}
+      SKY_ALIOSS_BUCKET_NAME: ${SKY_ALIOSS_BUCKET_NAME:-}
+      SKY_WECHAT_APPID: ${SKY_WECHAT_APPID:-}
+      SKY_WECHAT_SECRET: ${SKY_WECHAT_SECRET:-}
+      SKY_WECHAT_MCHID: ${SKY_WECHAT_MCHID:-}
+      SKY_WECHAT_MCHSERIALNO: ${SKY_WECHAT_MCHSERIALNO:-}
+      SKY_WECHAT_APIV3KEY: ${SKY_WECHAT_APIV3KEY:-}
+      SKY_WECHAT_NOTIFYURL: ${SKY_WECHAT_NOTIFYURL:-}
+      SKY_WECHAT_REFUNDNOTIFYURL: ${SKY_WECHAT_REFUNDNOTIFYURL:-}
+    ports:
+      - '127.0.0.1:${BACKEND_PORT:-8080}:8080'
+    healthcheck:
+      test: ['CMD', 'wget', '-q', '-O', '/dev/null', 'http://127.0.0.1:8080/actuator/health']
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 30s
     networks:
       - leisure-net
 
-  # ==================== 前端 ====================
   leisure-brew-frontend:
-    build: ./frontend
-    image: leisure-brew/frontend:latest
-    container_name: leisure-brew-frontend
-    ports:
-      - "80:80"
+    build:
+      context: .
+      dockerfile: apps/admin/Dockerfile
+    image: leisure-brew/frontend:local
+    restart: unless-stopped
     depends_on:
-      - leisure-brew-backend
+      leisure-brew-backend:
+        condition: service_healthy
+    ports:
+      - '127.0.0.1:${FRONTEND_PORT:-80}:80'
+    healthcheck:
+      test: ['CMD', 'wget', '-q', '-O', '/dev/null', 'http://127.0.0.1/']
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
     networks:
       - leisure-net
 
